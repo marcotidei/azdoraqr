@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { QRCodeSVG } from "qrcode.react";
 
+
 export default function App() {
   const [page, setPage] = useState("boot"); // boot | schedule | reset
 
@@ -15,6 +16,23 @@ export default function App() {
   const [lens, setLens] = useState("fW");
   const [resetType, setResetType] = useState("metadata");
   const [uploadTimeout, setUploadTimeout] = useState("");
+
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const media = window.matchMedia("(max-width: 480px)");
+    const update = () => setIsMobile(media.matches);
+
+    update();
+
+    if (media.addEventListener) {
+      media.addEventListener("change", update);
+      return () => media.removeEventListener("change", update);
+    } else {
+      media.addListener(update);
+      return () => media.removeListener(update);
+    }
+  }, []);
 
   function addMinutes(time, minutes) {
     const [h, m] = time.split(":").map(Number);
@@ -35,12 +53,13 @@ export default function App() {
   useEffect(() => {
     if (!upload) return;
 
-    const endMinutes = timeToMinutes(end);
+    const minimumUploadTime = addMinutes(end, 5);
+    const minimumUploadMinutes = timeToMinutes(minimumUploadTime);
     const uploadMinutes = timeToMinutes(uploadTime);
 
-    // Keep upload time always after end time
-    if (!uploadTime || uploadMinutes <= endMinutes) {
-      setUploadTime(addMinutes(end, 5));
+    // Keep upload time always at least 5 minutes after end time
+    if (!uploadTime || uploadMinutes < minimumUploadMinutes) {
+      setUploadTime(minimumUploadTime);
     }
   }, [end, upload, uploadTime]);
 
@@ -94,7 +113,7 @@ export default function App() {
   }
 
   function generateUploadTestScript() {
-    return "!U";
+    return "\"Upload Test\"+!5U";
   }
 
   function generateResetScript() {
@@ -119,31 +138,31 @@ export default function App() {
       case "metadata":
         return {
           title: "Reset Labs metadata + reboot",
-          text: "Clears permanent GoPro Labs features/metadata only. Normal camera settings are not affected and media is untouched. This is the safest reset for removing persistent Labs behavior such as BOOT-linked metadata features.",
+          text: "Clears permanent GoPro Labs features/metadata only. \n Normal camera settings are not affected and media is untouched. \n This is the safest reset for removing persistent Labs behavior \n such as BOOT-linked metadata features.",
         };
 
       case "presets":
         return {
           title: "Reset presets",
-          text: "Resets all camera presets to their default values and removes any custom presets.",
+          text: "Resets all camera presets to their default values \n and removes any custom presets.",
         };
 
       case "wifi":
         return {
           title: "Reset Wi‑Fi / connections",
-          text: "Resets wireless connections and paired-device connection state back to default settings.",
+          text: "Resets wireless connections and \n paired-device connection state back to default settings.",
         };
 
       case "factory":
         return {
           title: "Factory reset",
-          text: "Resets the camera to out-of-box settings, but keeps the currently installed firmware version.",
+          text: "Resets the camera to out-of-box settings, \n but keeps the currently installed firmware version.",
         };
 
       case "format":
         return {
           title: "Format SD card",
-          text: "Deletes all files from the SD card. Any saved script files stored on the SD card will be removed.",
+          text: "Deletes all files from the SD card. \n Any saved script files stored on the SD card will be removed.",
         };
 
       default:
@@ -164,7 +183,9 @@ export default function App() {
   function renderScheduleControls() {
     return (
       <>
-        <div style={styles.field}>
+        
+        <div style={{...styles.field, gridTemplateColumns: isMobile ? "1fr" : "180px minmax(0, 1fr)",}}>
+
           <label style={styles.label}>Start Time</label>
           <input
             type="time"
@@ -174,7 +195,7 @@ export default function App() {
           />
         </div>
 
-        <div style={styles.field}>
+        <div style={{...styles.field, gridTemplateColumns: isMobile ? "1fr" : "180px minmax(0, 1fr)",}}>
           <label style={styles.label}>End Time</label>
           <input
             type="time"
@@ -184,7 +205,7 @@ export default function App() {
           />
         </div>
 
-        <div style={styles.field}>
+        <div style={{...styles.field, gridTemplateColumns: isMobile ? "1fr" : "180px minmax(0, 1fr)",}}>
           <label style={styles.label}>Interval (minutes)</label>
           <input
             type="number"
@@ -205,7 +226,7 @@ export default function App() {
           </label>
         </div>
         {upload && (
-          <div style={styles.field}>
+          <div style={{...styles.field, gridTemplateColumns: isMobile ? "1fr" : "180px minmax(0, 1fr)",}}>
             <label style={styles.label}>Upload Time</label>
             <input
               type="time"
@@ -216,7 +237,7 @@ export default function App() {
           </div>
         )}
         {upload && (
-          <div style={styles.field}>
+          <div style={{...styles.field, gridTemplateColumns: isMobile ? "1fr" : "180px minmax(0, 1fr)",}}>
             <label style={styles.label}>Upload Timeout (minutes)</label>
             <input
               type="number"
@@ -269,7 +290,7 @@ function renderPageControls() {
         </div>
 
         <div style={styles.note}>
-          BOOT only programs the persistent startup behavior.
+          BOOT only programs the persistent startup behavior.<br />
           It does <strong>not</strong> save the schedule body.
         </div>
       </>
@@ -292,7 +313,7 @@ function renderPageControls() {
     return (
       <>
         <div style={styles.note}>
-          This page generates a non-persistent QR code to trigger an upload now.
+          This page generates a non-persistent QR code <br /> to trigger an upload now.
         </div>
       </>
     );
@@ -302,7 +323,7 @@ function renderPageControls() {
 
   return (
     <>
-      <div style={styles.field}>
+      <div style={{...styles.field, gridTemplateColumns: isMobile ? "1fr" : "180px minmax(0, 1fr)",}}>
         <label style={styles.label}>Reset Type</label>
         <select
           value={resetType}
@@ -377,7 +398,6 @@ function renderPageControls() {
       <h3>Generated Script</h3>
       <textarea
         rows={1}
-        cols={100}
         readOnly
         value={generateScript()}
         style={styles.textarea}
@@ -386,7 +406,7 @@ function renderPageControls() {
       <div style={{ marginTop: 20 }}>
         <QRCodeSVG
           value={generateScript()}
-          size={420}
+          size={isMobile ? 260 : 420}
           marginSize={4}
           bgColor="#FFFFFF"
           fgColor="#000000"
@@ -451,6 +471,7 @@ const styles = {
   },
   panel: {
     width: "100%",
+    minWidth: 0,
     boxSizing: "border-box",
     marginBottom: 20,
     padding: 16,
@@ -460,25 +481,31 @@ const styles = {
   },
   field: {
     display: "grid",
-    gridTemplateColumns: "180px 1fr",
+    gridTemplateColumns: "180px minmax(0, 1fr)",
     alignItems: "center",
     justifyItems: "start",
     textAlign: "left",
     gap: 12,
     marginBottom: 14,
     width: "100%",
+    minWidth: 0,
   },
   label: {
     display: "inline-block",
     fontSize: 14,
     color: "#292929",
   },
+
   textarea: {
     width: "100%",
     maxWidth: "100%",
+    minWidth: 0,
+    display: "block",
     fontFamily: "monospace",
     fontSize: 14,
+    boxSizing: "border-box",
   },
+
   note: {
     marginTop: 10,
     padding: 10,
@@ -487,12 +514,14 @@ const styles = {
     color: "#292929",
     borderRadius: 6,
     fontSize: 14,
-    whiteSpace: "normal",
+    whiteSpace: "pre-line",
     overflowWrap: "break-word",
     wordBreak: "break-word",
   },
   select: {
     width: "100%",
+    maxWidth: "100%",
+    minWidth: 0,
     color: "#111",
     backgroundColor: "#fff",
     border: "1px solid #ccc",
@@ -503,6 +532,7 @@ const styles = {
     WebkitAppearance: "menulist",
     appearance: "menulist",
   },
+
   checkboxRow: {
     marginBottom: 14,
     width: "100%",
@@ -510,8 +540,10 @@ const styles = {
     fontSize: 14,
     color: "#292929",
   },
+
   input: {
     width: "100%",
+    minWidth: 0,
     color: "#111",
     backgroundColor: "#fff",
     border: "1px solid #ccc",
@@ -520,8 +552,12 @@ const styles = {
     fontSize: 14,
     boxSizing: "border-box",
   },
+
   timeInput: {
     width: "100%",
+    maxWidth: "100%",
+    minWidth: 0,
+    display: "block",
     color: "#111",
     backgroundColor: "#fff",
     border: "1px solid #ccc",
@@ -529,8 +565,8 @@ const styles = {
     padding: "6px 10px",
     fontSize: 14,
     boxSizing: "border-box",
-    WebkitAppearance: "auto",
-    appearance: "auto",
+    WebkitAppearance: "none",
+    appearance: "none",
     colorScheme: "light",
   },
 
