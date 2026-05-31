@@ -4,10 +4,10 @@ import { QRCodeSVG } from "qrcode.react";
 export default function App() {
   const [page, setPage] = useState("boot"); // boot | schedule | reset
 
-  const [start, setStart] = useState("08:00");
+  const [start, setStart] = useState("07:00");
   const [end, setEnd] = useState("19:00");
   const [upload, setUpload] = useState(true);
-  const [interval, setInterval] = useState(2);
+  const [interval, setInterval] = useState(20);
   const [uploadTime, setUploadTime] = useState("19:05");
   const [gpsSync, setGpsSync] = useState(true);
   const [enableTusb, setEnableTusb] = useState(true);
@@ -99,6 +99,46 @@ export default function App() {
         return "!FORMAT";
       default:
         return "!RESET!1OR";
+    }
+  }
+
+  function getResetInfo() {
+    switch (resetType) {
+      case "metadata":
+        return {
+          title: "Reset Labs metadata + reboot",
+          text: "Clears permanent GoPro Labs features/metadata only. Normal camera settings are not affected and media is untouched. This is the safest reset for removing persistent Labs behavior such as BOOT-linked metadata features.",
+        };
+
+      case "presets":
+        return {
+          title: "Reset presets",
+          text: "Resets all camera presets to their default values and removes any custom presets.",
+        };
+
+      case "wifi":
+        return {
+          title: "Reset Wi-Fi / connections",
+          text: "Resets wireless connections and paired-device connection state back to default settings.",
+        };
+
+      case "factory":
+        return {
+          title: "Factory reset",
+          text: "Resets the camera to out-of-box settings, but keeps the currently installed firmware version.",
+        };
+
+      case "format":
+        return {
+          title: "Format SD card",
+          text: "Deletes all files from the SD card. Any saved script files stored on the SD card will be removed.",
+        };
+
+      default:
+        return {
+          title: "Reset Labs metadata + reboot",
+          text: "Clears permanent GoPro Labs features/metadata only. Normal camera settings are not affected and media is untouched.",
+        };
     }
   }
 
@@ -214,10 +254,13 @@ export default function App() {
       );
     }
 
-    return (
-      <>
-        <div style={styles.field}>
-          <label style={styles.label}>Reset Type</label>
+    return (() => {
+      const resetInfo = getResetInfo();
+
+      return (
+        <>
+          <div style={styles.field}>
+            <label style={styles.label}>Reset Type</label>
             <select
               value={resetType}
               onChange={(e) => setResetType(e.target.value)}
@@ -229,13 +272,22 @@ export default function App() {
               <option value="factory">Factory reset</option>
               <option value="format">Format SD card</option>
             </select>
-        </div>
+          </div>
 
-        <div style={styles.note}>
-          Use RESET carefully — some options are destructive.
-        </div>
-      </>
-    );
+          <div style={styles.note}>
+            <strong>{resetInfo.title}</strong>
+            <div style={{ marginTop: 6 }}>{resetInfo.text}</div>
+
+            {(resetType === "factory" || resetType === "format") && (
+              <div style={{ marginTop: 10, color: "#8b0000", fontWeight: 600 }}>
+                Warning: this option is destructive.
+              </div>
+            )}
+          </div>
+        </>
+      );
+    })();
+
   }
 
   function getTitle() {
