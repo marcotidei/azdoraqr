@@ -117,6 +117,7 @@ export default function App() {
             type="time"
             value={start}
             onChange={(e) => setStart(e.target.value)}
+            style={styles.timeInput}
           />
         </div>
 
@@ -126,6 +127,7 @@ export default function App() {
             type="time"
             value={end}
             onChange={(e) => setEnd(e.target.value)}
+            style={styles.timeInput}
           />
         </div>
 
@@ -136,33 +138,8 @@ export default function App() {
             min="1"
             value={interval}
             onChange={(e) => setInterval(Number(e.target.value))}
+            style={styles.input}
           />
-        </div>
-
-        <div style={styles.field}>
-          <label style={styles.label}>Lens / FOV</label>
-          <select value={lens} onChange={(e) => setLens(e.target.value)}>
-            <option value="">Not set</option>
-            <option value="fN">Narrow (older models)</option>
-            <option value="fM">Medium (older models)</option>
-            <option value="fW">Wide</option>
-            <option value="fL">Linear</option>
-            <option value="fS">Superview</option>
-            <option value="fV">HyperView (H11-13)</option>
-            <option value="fH">Horizontal Level + Linear (H9-13)</option>
-            <option value="fX">SuperMax Wide (Max Lens Mod)</option>
-          </select>
-        </div>
-
-        <div style={styles.field}>
-          <label>
-            <input
-              type="checkbox"
-              checked={upload}
-              onChange={(e) => setUpload(e.target.checked)}
-            />{" "}
-            Upload after schedule ends
-          </label>
         </div>
 
         {upload && (
@@ -172,6 +149,7 @@ export default function App() {
               type="time"
               value={uploadTime}
               onChange={(e) => setUploadTime(e.target.value)}
+              style={styles.timeInput}
             />
           </div>
         )}
@@ -240,16 +218,17 @@ export default function App() {
       <>
         <div style={styles.field}>
           <label style={styles.label}>Reset Type</label>
-          <select
-            value={resetType}
-            onChange={(e) => setResetType(e.target.value)}
-          >
-            <option value="metadata">Reset Labs metadata + reboot</option>
-            <option value="presets">Reset presets</option>
-            <option value="wifi">Reset Wi-Fi credentials</option>
-            <option value="factory">Factory reset</option>
-            <option value="format">Format SD card</option>
-          </select>
+            <select
+              value={resetType}
+              onChange={(e) => setResetType(e.target.value)}
+              style={styles.select}
+            >
+              <option value="metadata">Reset Labs metadata + reboot</option>
+              <option value="presets">Reset presets</option>
+              <option value="wifi">Reset Wi-Fi credentials</option>
+              <option value="factory">Factory reset</option>
+              <option value="format">Format SD card</option>
+            </select>
         </div>
 
         <div style={styles.note}>
@@ -260,9 +239,9 @@ export default function App() {
   }
 
   function getTitle() {
-    if (page === "boot") return "GoPro Labs BOOT Programming";
-    if (page === "schedule") return "GoPro Labs SCHEDULE Generator";
-    return "GoPro Labs RESET QR Code";
+    if (page === "boot") return "azdoraQR - BOOT";
+    if (page === "schedule") return "azdoraQR - SCHEDULE";
+    return "azdoraQR - RESET";
   }
 
   return (
@@ -271,25 +250,26 @@ export default function App() {
 
       <div style={styles.tabs}>
         <button
-          style={page === "reset" ? styles.activeTab : styles.tab}
-          onClick={() => setPage("reset")}
-        >
-          RESET QR Code
-        </button>
-
-        <button
           style={page === "boot" ? styles.activeTab : styles.tab}
           onClick={() => setPage("boot")}
         >
-          BOOT Programming
+          1. BOOT
         </button>
 
         <button
           style={page === "schedule" ? styles.activeTab : styles.tab}
           onClick={() => setPage("schedule")}
         >
-          SCHEDULE
+          2. SCHEDULE
         </button>
+
+        <button
+          style={page === "reset" ? styles.resetActiveTab : styles.resetTab}
+          onClick={() => setPage("reset")}
+        >
+          RESET
+        </button>
+
       </div>
 
       <div style={styles.panel}>{renderPageControls()}</div>
@@ -374,4 +354,57 @@ const styles = {
     borderRadius: 6,
     fontSize: 14,
   },
+  select: {
+    color: "#111",
+    backgroundColor: "#fff",
+    border: "1px solid #ccc",
+    borderRadius: 6,
+    padding: "6px 10px",
+    fontSize: 14,
+    WebkitAppearance: "menulist",
+    appearance: "menulist",
+  },
+  resetTab: {
+    padding: "10px 14px",
+    border: "1px solid #d6a0a0",
+    background: "#fff5f5",
+    color: "#8b0000",
+    cursor: "pointer",
+    borderRadius: 6,
+  },
+
+  resetActiveTab: {
+    padding: "10px 14px",
+    border: "1px solid #8b0000",
+    background: "#c62828",
+    color: "#fff",
+    cursor: "pointer",
+    borderRadius: 6,
+  },
+
+  input: {
+    color: "#111",
+    backgroundColor: "#fff",
+    border: "1px solid #ccc",
+    borderRadius: 6,
+    padding: "6px 10px",
+    fontSize: 14,
+    minWidth: 140,
+    boxSizing: "border-box",
+  },
+
+  timeInput: {
+    color: "#111",
+    backgroundColor: "#fff",
+    border: "1px solid #ccc",
+    borderRadius: 6,
+    padding: "6px 10px",
+    fontSize: 14,
+    minWidth: 140,
+    boxSizing: "border-box",
+    WebkitAppearance: "auto",
+    appearance: "auto",
+    colorScheme: "light",
+  },
+
 };
