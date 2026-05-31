@@ -94,7 +94,7 @@ export default function App() {
     const wakeTime = addMinutes(start, -1);
     const stopTime = addMinutes(end, 1);
 
-    let script = `!SAVEsch=>${wakeTime}<${stopTime}!1N`;
+    let script = `!SAVEsch=>${wakeTime}<${stopTime}+!1N`;
 
     if (lens) {
       script += `+${lens}`;
@@ -413,6 +413,22 @@ function renderPageControls() {
           level="M"
         />
       </div>
+
+      <div style={styles.footer}>
+        <div style={styles.footerNote}>
+          With love. Marco.
+        </div>
+
+        <a
+          href="https://gopro.github.io/labs/control/tech/"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={styles.footerLink}
+        >
+          GoPro Labs documentation
+        </a>
+      </div>
+
     </div>
   );
 }
@@ -568,6 +584,23 @@ const styles = {
     WebkitAppearance: "none",
     appearance: "none",
     colorScheme: "light",
+  },
+  footer: {
+    marginTop: 24,
+    paddingTop: 16,
+    borderTop: "1px solid #555",
+    color: "#ddd",
+    fontSize: 14,
+  },
+
+  footerNote: {
+    marginBottom: 8,
+    lineHeight: 1.5,
+  },
+
+  footerLink: {
+    color: "#8ab4ff",
+    textDecoration: "none",
   },
 
 };
