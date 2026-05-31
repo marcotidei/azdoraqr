@@ -14,6 +14,7 @@ export default function App() {
   const [enableFast, setEnableFast] = useState(true);
   const [lens, setLens] = useState("fW");
   const [resetType, setResetType] = useState("metadata");
+  const [uploadTimeout, setUploadTimeout] = useState("");
 
   function addMinutes(time, minutes) {
     const [h, m] = time.split(":").map(Number);
@@ -76,11 +77,12 @@ export default function App() {
 
     script += `+!S+!1N+!${intervalToLabs(interval)}`;
 
-    if (upload) {
-      script += `~!${uploadTime}U+!${start}R`;
-    } else {
-      script += `~!${start}R`;
-    }
+  if (upload) {
+    const timeoutSuffix = uploadTimeout ? String(uploadTimeout) : "";
+    script += `~!${uploadTime}U${timeoutSuffix}+!${start}R`;
+  } else {
+    script += `~!${start}R`;
+  }
 
     return script;
   }
@@ -118,7 +120,7 @@ export default function App() {
 
       case "wifi":
         return {
-          title: "Reset Wi-Fi / connections",
+          title: "Reset Wi‑Fi / connections",
           text: "Resets wireless connections and paired-device connection state back to default settings.",
         };
 
@@ -181,7 +183,16 @@ export default function App() {
             style={styles.input}
           />
         </div>
-
+        <div style={styles.checkboxRow}>
+          <label>
+            <input
+              type="checkbox"
+              checked={upload}
+              onChange={(e) => setUpload(e.target.checked)}
+            />{" "}
+            Enable upload
+          </label>
+        </div>
         {upload && (
           <div style={styles.field}>
             <label style={styles.label}>Upload Time</label>
@@ -193,102 +204,112 @@ export default function App() {
             />
           </div>
         )}
+        {upload && (
+          <div style={styles.field}>
+            <label style={styles.label}>Upload Timeout (minutes)</label>
+            <input
+              type="number"
+              min="1"
+              value={uploadTimeout}
+              onChange={(e) => setUploadTimeout(e.target.value)}
+              style={styles.input}
+            />
+          </div>
+        )}
       </>
     );
   }
 
-  function renderPageControls() {
-    if (page === "boot") {
-      return (
-        <>
-          <div style={styles.checkboxRow}>
-            <label>
-              <input
-                type="checkbox"
-                checked={enableTusb}
-                onChange={(e) => setEnableTusb(e.target.checked)}
-              />{" "}
-              Enable USB Power Support
-            </label>
-          </div>
+function renderPageControls() {
+  if (page === "boot") {
+    return (
+      <>
+        <div style={styles.checkboxRow}>
+          <label>
+            <input
+              type="checkbox"
+              checked={enableTusb}
+              onChange={(e) => setEnableTusb(e.target.checked)}
+            />{" "}
+            Enable USB Power Support
+          </label>
+        </div>
 
-          <div style={styles.checkboxRow}>
-            <label>
-              <input
-                type="checkbox"
-                checked={enableFast}
-                onChange={(e) => setEnableFast(e.target.checked)}
-              />{" "}
-              Enable Fast Boot
-            </label>
-          </div>
+        <div style={styles.checkboxRow}>
+          <label>
+            <input
+              type="checkbox"
+              checked={enableFast}
+              onChange={(e) => setEnableFast(e.target.checked)}
+            />{" "}
+            Enable Fast Boot
+          </label>
+        </div>
 
-          <div style={styles.checkboxRow}>
-            <label>
-              <input
-                type="checkbox"
-                checked={gpsSync}
-                onChange={(e) => setGpsSync(e.target.checked)}
-              />{" "}
-              Enable GPS clock sync
-            </label>
-          </div>
+        <div style={styles.checkboxRow}>
+          <label>
+            <input
+              type="checkbox"
+              checked={gpsSync}
+              onChange={(e) => setGpsSync(e.target.checked)}
+            />{" "}
+            Enable GPS clock sync
+          </label>
+        </div>
 
-          <div style={styles.note}>
-            BOOT only programs the persistent startup behavior.
-            It does <strong>not</strong> save the schedule body.
-          </div>
-        </>
-      );
-    }
-
-    if (page === "schedule") {
-      return (
-        <>
-          {renderScheduleControls()}
-          <div style={styles.note}>
-            SCHEDULE saves the script into <code>sch</code> using{" "}
-            <code>!SAVEsch=...</code>.
-          </div>
-        </>
-      );
-    }
-
-    return (() => {
-      const resetInfo = getResetInfo();
-
-      return (
-        <>
-          <div style={styles.field}>
-            <label style={styles.label}>Reset Type</label>
-            <select
-              value={resetType}
-              onChange={(e) => setResetType(e.target.value)}
-              style={styles.select}
-            >
-              <option value="metadata">Reset Labs metadata + reboot</option>
-              <option value="presets">Reset presets</option>
-              <option value="wifi">Reset Wi-Fi credentials</option>
-              <option value="factory">Factory reset</option>
-              <option value="format">Format SD card</option>
-            </select>
-          </div>
-
-          <div style={styles.note}>
-            <strong>{resetInfo.title}</strong>
-            <div style={{ marginTop: 6 }}>{resetInfo.text}</div>
-
-            {(resetType === "factory" || resetType === "format") && (
-              <div style={{ marginTop: 10, color: "#8b0000", fontWeight: 600 }}>
-                Warning: this option is destructive.
-              </div>
-            )}
-          </div>
-        </>
-      );
-    })();
-
+        <div style={styles.note}>
+          BOOT only programs the persistent startup behavior.
+          It does <strong>not</strong> save the schedule body.
+        </div>
+      </>
+    );
   }
+
+  if (page === "schedule") {
+    return (
+      <>
+        {renderScheduleControls()}
+        <div style={styles.note}>
+          SCHEDULE saves the script into <code>sch</code> using{" "}
+          <code>!SAVEsch=...</code>.
+        </div>
+      </>
+    );
+  }
+
+  const resetInfo = getResetInfo();
+
+  return (
+    <>
+      <div style={styles.field}>
+        <label style={styles.label}>Reset Type</label>
+        <select
+          value={resetType}
+          onChange={(e) => setResetType(e.target.value)}
+          style={styles.select}
+        >
+          <option value="metadata">Reset Labs metadata + reboot</option>
+          <option value="presets">Reset presets</option>
+          <option value="wifi">Reset Wi-Fi credentials</option>
+          <option value="factory">Factory reset</option>
+          <option value="format">Format SD card</option>
+        </select>
+      </div>
+
+      <div style={styles.note}>
+        <strong>{resetInfo.title}</strong>
+        <div style={{ marginTop: 6 }}>{resetInfo.text}</div>
+
+        {(resetType === "factory" || resetType === "format") && (
+          <div style={{ marginTop: 10, color: "#8b0000", fontWeight: 600 }}>
+            Warning: this option is destructive.
+          </div>
+        )}
+      </div>
+    </>
+  );
+}
+
 
   function getTitle() {
     if (page === "boot") return "👵🏼\u00A0\u00A0\u00A0azdòra QR";
@@ -363,7 +384,7 @@ const styles = {
     color: "#ffffff",
     fontWeight: "700",
   },
-tabs: {
+  tabs: {
     display: "flex",
     gap: 10,
     marginBottom: 20,
@@ -414,6 +435,8 @@ tabs: {
     display: "grid",
     gridTemplateColumns: "180px 1fr",
     alignItems: "center",
+    justifyItems: "start",
+    textAlign: "left",
     gap: 12,
     marginBottom: 14,
     width: "100%",
@@ -434,6 +457,9 @@ tabs: {
     border: "1px solid #e6d28f",
     borderRadius: 6,
     fontSize: 14,
+    whiteSpace: "normal",
+    overflowWrap: "break-word",
+    wordBreak: "break-word",
   },
   select: {
     width: "100%",
@@ -450,6 +476,7 @@ tabs: {
   checkboxRow: {
     marginBottom: 14,
     width: "100%",
+    textAlign: "left",
   },
   input: {
     width: "100%",
