@@ -239,9 +239,9 @@ export default function App() {
   }
 
   function getTitle() {
-    if (page === "boot") return "👵🏼 azdoraQR";
-    if (page === "schedule") return "👵🏼 azdoraQR";
-    return "👵🏼 azdoraQR";
+    if (page === "boot") return "👵🏼\u00A0\u00A0\u00A0azdòra QR";
+    if (page === "schedule") return "👵🏼\u00A0\u00A0\u00A0azdòra QR";
+    return "👵🏼\u00A0\u00A0\u00A0azdòra QR";
   }
 
   return (
@@ -303,6 +303,7 @@ const styles = {
     fontFamily: "Arial, sans-serif",
     maxWidth: 900,
     margin: "0 auto",
+    backgroundColor: "#292929",
   },
   title: {
     fontSize: 32,
@@ -319,7 +320,7 @@ tabs: {
   tab: {
     padding: "10px 14px",
     border: "1px solid #ccc",
-    background: "#f7f7f7",
+    background: "#ffffff",
     color: "#111",
     cursor: "pointer",
     borderRadius: 6,
@@ -327,7 +328,23 @@ tabs: {
   activeTab: {
     padding: "10px 14px",
     border: "1px solid #333",
-    background: "#2c12ad",
+    background: "#421ef5",
+    color: "#fff",
+    cursor: "pointer",
+    borderRadius: 6,
+  },
+  resetTab: {
+    padding: "10px 14px",
+    border: "1px solid #d6a0a0",
+    background: "#ffffff",
+    color: "#8b0000",
+    cursor: "pointer",
+    borderRadius: 6,
+  },
+  resetActiveTab: {
+    padding: "10px 14px",
+    border: "1px solid #8b0000",
+    background: "#c62828",
     color: "#fff",
     cursor: "pointer",
     borderRadius: 6,
@@ -381,22 +398,6 @@ tabs: {
   checkboxRow: {
     marginBottom: 14,
     width: "100%",
-  },
-  resetTab: {
-    padding: "10px 14px",
-    border: "1px solid #d6a0a0",
-    background: "#fff5f5",
-    color: "#8b0000",
-    cursor: "pointer",
-    borderRadius: 6,
-  },
-  resetActiveTab: {
-    padding: "10px 14px",
-    border: "1px solid #8b0000",
-    background: "#c62828",
-    color: "#fff",
-    cursor: "pointer",
-    borderRadius: 6,
   },
   input: {
     width: "100%",
