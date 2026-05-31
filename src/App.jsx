@@ -81,7 +81,7 @@ export default function App() {
     const timeoutSuffix = uploadTimeout ? String(uploadTimeout) : "";
     script += `~!${uploadTime}U${timeoutSuffix}+!${start}R`;
   } else {
-    script += `~!${start}R`;
+    script += `!${start}R`;
   }
 
     return script;
