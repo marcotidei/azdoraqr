@@ -161,7 +161,7 @@ export default function App() {
     if (page === "boot") {
       return (
         <>
-          <div style={styles.field}>
+          <div style={styles.checkboxRow}>
             <label>
               <input
                 type="checkbox"
@@ -172,7 +172,7 @@ export default function App() {
             </label>
           </div>
 
-          <div style={styles.field}>
+          <div style={styles.checkboxRow}>
             <label>
               <input
                 type="checkbox"
@@ -183,7 +183,7 @@ export default function App() {
             </label>
           </div>
 
-          <div style={styles.field}>
+          <div style={styles.checkboxRow}>
             <label>
               <input
                 type="checkbox"
@@ -239,14 +239,14 @@ export default function App() {
   }
 
   function getTitle() {
-    if (page === "boot") return "azdoraQR - BOOT";
-    if (page === "schedule") return "azdoraQR - SCHEDULE";
-    return "azdoraQR - RESET";
+    if (page === "boot") return "👵🏼 azdoraQR";
+    if (page === "schedule") return "👵🏼 azdoraQR";
+    return "👵🏼 azdoraQR";
   }
 
   return (
     <div style={styles.container}>
-      <h1>{getTitle()}</h1>
+      <h1 style={styles.title}>{getTitle()}</h1>
 
       <div style={styles.tabs}>
         <button
@@ -276,7 +276,7 @@ export default function App() {
 
       <h3>Generated Script</h3>
       <textarea
-        rows={6}
+        rows={1}
         cols={100}
         readOnly
         value={generateScript()}
@@ -304,7 +304,13 @@ const styles = {
     maxWidth: 900,
     margin: "0 auto",
   },
-  tabs: {
+  title: {
+    fontSize: 32,
+    marginBottom: 20,
+    color: "#ffffff",
+    fontWeight: "700",
+  },
+tabs: {
     display: "flex",
     gap: 10,
     marginBottom: 20,
@@ -327,6 +333,8 @@ const styles = {
     borderRadius: 6,
   },
   panel: {
+    width: "100%",
+    boxSizing: "border-box",
     marginBottom: 20,
     padding: 16,
     border: "1px solid #ddd",
@@ -334,11 +342,15 @@ const styles = {
     background: "#ffffff",
   },
   field: {
+    display: "grid",
+    gridTemplateColumns: "180px 1fr",
+    alignItems: "center",
+    gap: 12,
     marginBottom: 14,
+    width: "100%",
   },
   label: {
     display: "inline-block",
-    width: 160,
   },
   textarea: {
     width: "100%",
@@ -355,14 +367,20 @@ const styles = {
     fontSize: 14,
   },
   select: {
+    width: "100%",
     color: "#111",
     backgroundColor: "#fff",
     border: "1px solid #ccc",
     borderRadius: 6,
     padding: "6px 10px",
     fontSize: 14,
+    boxSizing: "border-box",
     WebkitAppearance: "menulist",
     appearance: "menulist",
+  },
+  checkboxRow: {
+    marginBottom: 14,
+    width: "100%",
   },
   resetTab: {
     padding: "10px 14px",
@@ -372,7 +390,6 @@ const styles = {
     cursor: "pointer",
     borderRadius: 6,
   },
-
   resetActiveTab: {
     padding: "10px 14px",
     border: "1px solid #8b0000",
@@ -381,26 +398,24 @@ const styles = {
     cursor: "pointer",
     borderRadius: 6,
   },
-
   input: {
+    width: "100%",
     color: "#111",
     backgroundColor: "#fff",
     border: "1px solid #ccc",
     borderRadius: 6,
     padding: "6px 10px",
     fontSize: 14,
-    minWidth: 140,
     boxSizing: "border-box",
   },
-
   timeInput: {
+    width: "100%",
     color: "#111",
     backgroundColor: "#fff",
     border: "1px solid #ccc",
     borderRadius: 6,
     padding: "6px 10px",
     fontSize: 14,
-    minWidth: 140,
     boxSizing: "border-box",
     WebkitAppearance: "auto",
     appearance: "auto",
