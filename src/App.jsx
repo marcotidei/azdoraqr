@@ -44,6 +44,12 @@ export default function App() {
     }
   }, [end, upload, uploadTime]);
 
+  useEffect(() => {
+    if (!upload && page === "uploadTest") {
+      setPage("schedule");
+    }
+  }, [upload, page]);
+
   function generateBootScript() {
     let script = "";
 
@@ -85,6 +91,10 @@ export default function App() {
   }
 
     return script;
+  }
+
+  function generateUploadTestScript() {
+    return "!U";
   }
 
   function generateResetScript() {
@@ -147,6 +157,7 @@ export default function App() {
   function generateScript() {
     if (page === "boot") return generateBootScript();
     if (page === "schedule") return generateScheduleScript();
+    if (page === "uploadTest") return generateUploadTestScript();
     return generateResetScript();
   }
 
@@ -277,6 +288,16 @@ function renderPageControls() {
     );
   }
 
+  if (page === "uploadTest") {
+    return (
+      <>
+        <div style={styles.note}>
+          This page generates a non-persistent QR code to trigger an upload now.
+        </div>
+      </>
+    );
+  }
+
   const resetInfo = getResetInfo();
 
   return (
@@ -310,10 +331,7 @@ function renderPageControls() {
   );
 }
 
-
   function getTitle() {
-    if (page === "boot") return "👵🏼\u00A0\u00A0\u00A0azdòra QR";
-    if (page === "schedule") return "👵🏼\u00A0\u00A0\u00A0azdòra QR";
     return "👵🏼\u00A0\u00A0\u00A0azdòra QR";
   }
 
@@ -335,6 +353,15 @@ function renderPageControls() {
         >
           2. SCHEDULE
         </button>
+
+        {upload && (
+          <button
+            style={page === "uploadTest" ? styles.activeTab : styles.tab}
+            onClick={() => setPage("uploadTest")}
+          >
+            3. UPLOAD TEST
+          </button>
+        )}
 
         <button
           style={page === "reset" ? styles.resetActiveTab : styles.resetTab}
@@ -443,6 +470,8 @@ const styles = {
   },
   label: {
     display: "inline-block",
+    fontSize: 14,
+    color: "#292929",
   },
   textarea: {
     width: "100%",
@@ -455,6 +484,7 @@ const styles = {
     padding: 10,
     background: "#fff8dc",
     border: "1px solid #e6d28f",
+    color: "#292929",
     borderRadius: 6,
     fontSize: 14,
     whiteSpace: "normal",
@@ -477,6 +507,8 @@ const styles = {
     marginBottom: 14,
     width: "100%",
     textAlign: "left",
+    fontSize: 14,
+    color: "#292929",
   },
   input: {
     width: "100%",
