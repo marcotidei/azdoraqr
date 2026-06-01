@@ -40,7 +40,7 @@ const RESET_OPTIONS = [
 const RESET_INFO = {
   metadata: {
     title: "Reset Labs metadata + reboot",
-    text: "Clears permanent GoPro Labs features/metadata only. Normal camera settings are not affected and media is untouched. this is the safest reset for removing persistent Labs behavior such as BOOT-linked metadata features.",
+    text: "Clears permanent GoPro Labs features/metadata only (BOOT). Normal camera settings are not affected and media is untouched.",
   },
   presets: {
     title: "Reset presets",
@@ -52,11 +52,11 @@ const RESET_INFO = {
   },
   factory: {
     title: "Factory reset",
-    text: "Resets the camera to out-of-box settings, but keeps the currently installed firmware version.",
+    text: "Resets the camera to out-of-box settings, but keeps permanent GoPro Labs features/metadata (BOOT) and the currently installed firmware version.",
   },
   format: {
     title: "Format SD card",
-    text: "Deletes all files from the SD card. Any saved script files stored on the SD card will be removed.",
+    text: "Deletes all files from the SD card. Any saved script files stored on the SD card will be removed so you will need to re-upload the SCHEDULE.",
   },
 };
 
