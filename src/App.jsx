@@ -441,7 +441,7 @@ export default function App() {
       <div style={styles.panel}>{renderPageControls()}</div>
 
       <h3 style={{ color: "#ffffff" }}>Generated Script</h3>
-      <textarea rows={1} readOnly value={generateScript()} style={styles.textarea} />
+      <textarea rows={3} readOnly value={generateScript()} style={styles.textarea} />
 
       <div style={{ marginTop: 20 }}>
         <QRCodeSVG
