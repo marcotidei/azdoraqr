@@ -455,7 +455,7 @@ export default function App() {
       </div>
 
       <div style={styles.footer}>
-        <div style={styles.footerNote}>With love. Marco.</div>
+        <div style={styles.footerNote}>From Marco, with love.</div>
         <a
           href="https://gopro.github.io/labs/control/tech/"
           target="_blank"
