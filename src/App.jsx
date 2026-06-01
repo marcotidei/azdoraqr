@@ -16,6 +16,10 @@ export default function App() {
   const [lens, setLens] = useState("fW");
   const [resetType, setResetType] = useState("metadata");
   const [uploadTimeout, setUploadTimeout] = useState("");
+  const [screenTimeout1m, setScreenTimeout1m] = useState(true);
+  const [lcd10, setLcd10] = useState(false);
+  const [voiceOff, setVoiceOff] = useState(false);
+  const [ledsOff, setLedsOff] = useState(false);
 
   const [isMobile, setIsMobile] = useState(false);
 
@@ -69,6 +73,26 @@ export default function App() {
     }
   }, [upload, page]);
 
+  function buildPowerSaveCommands() {
+    const optionParts = [];
+
+    if (screenTimeout1m) optionParts.push("S1"); // oS1
+    if (lcd10) optionParts.push("B1");           // oB1
+    if (ledsOff) optionParts.push("D0");         // oD0
+
+    const commands = [];
+
+    if (optionParts.length) {
+      commands.push(`o${optionParts.join("")}`); // e.g. oS1B1D0
+    }
+
+    if (voiceOff) {
+      commands.push("v0"); // voice commands off
+    }
+
+    return commands;
+  }
+
   function generateBootScript() {
     let script = "";
 
@@ -100,14 +124,19 @@ export default function App() {
       script += `+${lens}`;
     }
 
+    const powerSaveCommands = buildPowerSaveCommands();
+    if (powerSaveCommands.length) {
+      script += `+${powerSaveCommands.join("+")}`;
+    }
+
     script += `+!S+!1N+!${intervalToLabs(interval)}`;
 
-  if (upload) {
-    const timeoutSuffix = uploadTimeout ? String(uploadTimeout) : "";
-    script += `~!${uploadTime}U${timeoutSuffix}+!${start}R`;
-  } else {
-    script += `!${start}R`;
-  }
+    if (upload) {
+      const timeoutSuffix = uploadTimeout ? String(uploadTimeout) : "";
+      script += `~!${uploadTime}U${timeoutSuffix}+!${start}R`;
+    } else {
+      script += `!${start}R`;
+    }
 
     return script;
   }
@@ -183,9 +212,12 @@ export default function App() {
   function renderScheduleControls() {
     return (
       <>
-        
-        <div style={{...styles.field, gridTemplateColumns: isMobile ? "1fr" : "180px minmax(0, 1fr)",}}>
-
+        <div
+          style={{
+            ...styles.field,
+            gridTemplateColumns: isMobile ? "1fr" : "180px minmax(0, 1fr)",
+          }}
+        >
           <label style={styles.label}>Start Time</label>
           <input
             type="time"
@@ -195,7 +227,12 @@ export default function App() {
           />
         </div>
 
-        <div style={{...styles.field, gridTemplateColumns: isMobile ? "1fr" : "180px minmax(0, 1fr)",}}>
+        <div
+          style={{
+            ...styles.field,
+            gridTemplateColumns: isMobile ? "1fr" : "180px minmax(0, 1fr)",
+          }}
+        >
           <label style={styles.label}>End Time</label>
           <input
             type="time"
@@ -205,7 +242,12 @@ export default function App() {
           />
         </div>
 
-        <div style={{...styles.field, gridTemplateColumns: isMobile ? "1fr" : "180px minmax(0, 1fr)",}}>
+        <div
+          style={{
+            ...styles.field,
+            gridTemplateColumns: isMobile ? "1fr" : "180px minmax(0, 1fr)",
+          }}
+        >
           <label style={styles.label}>Interval (minutes)</label>
           <input
             type="number"
@@ -215,6 +257,7 @@ export default function App() {
             style={styles.input}
           />
         </div>
+
         <div style={styles.checkboxRow}>
           <label>
             <input
@@ -225,29 +268,85 @@ export default function App() {
             Enable upload
           </label>
         </div>
+
         {upload && (
-          <div style={{...styles.field, gridTemplateColumns: isMobile ? "1fr" : "180px minmax(0, 1fr)",}}>
-            <label style={styles.label}>Upload Time</label>
-            <input
-              type="time"
-              value={uploadTime}
-              onChange={(e) => setUploadTime(e.target.value)}
-              style={styles.timeInput}
-            />
-          </div>
+          <>
+            <div
+              style={{
+                ...styles.field,
+                gridTemplateColumns: isMobile ? "1fr" : "180px minmax(0, 1fr)",
+              }}
+            >
+              <label style={styles.label}>Upload Time</label>
+              <input
+                type="time"
+                value={uploadTime}
+                onChange={(e) => setUploadTime(e.target.value)}
+                style={styles.timeInput}
+              />
+            </div>
+
+            <div
+              style={{
+                ...styles.field,
+                gridTemplateColumns: isMobile ? "1fr" : "180px minmax(0, 1fr)",
+              }}
+            >
+              <label style={styles.label}>Upload Timeout (minutes)</label>
+              <input
+                type="number"
+                min="1"
+                value={uploadTimeout}
+                onChange={(e) => setUploadTimeout(e.target.value)}
+                style={styles.input}
+              />
+            </div>
+          </>
         )}
-        {upload && (
-          <div style={{...styles.field, gridTemplateColumns: isMobile ? "1fr" : "180px minmax(0, 1fr)",}}>
-            <label style={styles.label}>Upload Timeout (minutes)</label>
+
+        <div style={styles.checkboxRow}>
+          <label>
             <input
-              type="number"
-              min="1"
-              value={uploadTimeout}
-              onChange={(e) => setUploadTimeout(e.target.value)}
-              style={styles.input}
-            />
-          </div>
-        )}
+              type="checkbox"
+              checked={screenTimeout1m}
+              onChange={(e) => setScreenTimeout1m(e.target.checked)}
+            />{" "}
+            Screen auto-off after 1 minute (oS1)
+          </label>
+        </div>
+
+        <div style={styles.checkboxRow}>
+          <label>
+            <input
+              type="checkbox"
+              checked={lcd10}
+              onChange={(e) => setLcd10(e.target.checked)}
+            />{" "}
+            LCD brightness 10% (oB1)
+          </label>
+        </div>
+
+        <div style={styles.checkboxRow}>
+          <label>
+            <input
+              type="checkbox"
+              checked={voiceOff}
+              onChange={(e) => setVoiceOff(e.target.checked)}
+            />{" "}
+            Voice commands off (v0)
+          </label>
+        </div>
+
+        <div style={styles.checkboxRow}>
+          <label>
+            <input
+              type="checkbox"
+              checked={ledsOff}
+              onChange={(e) => setLedsOff(e.target.checked)}
+            />{" "}
+            All LEDs off (oD0)
+          </label>
+        </div>
       </>
     );
   }
