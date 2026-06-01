@@ -120,9 +120,11 @@ export default function App() {
 
     let script = `!SAVEsch=>${wakeTime}<${stopTime}+!1N`;
 
+    /*
     if (lens) {
       script += `+${lens}`;
     }
+    */
 
     const powerSaveCommands = buildPowerSaveCommands();
     if (powerSaveCommands.length) {
