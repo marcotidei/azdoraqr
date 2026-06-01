@@ -120,11 +120,9 @@ export default function App() {
 
     let script = `!SAVEsch=>${wakeTime}<${stopTime}+!1N`;
 
-    /*
     if (lens) {
       script += `+${lens}`;
     }
-    */
 
     const powerSaveCommands = buildPowerSaveCommands();
     if (powerSaveCommands.length) {
@@ -258,6 +256,21 @@ export default function App() {
             onChange={(e) => setInterval(Number(e.target.value))}
             style={styles.input}
           />
+        </div>
+
+      <div style={{...styles.field, gridTemplateColumns: isMobile ? "1fr" : "180px minmax(0, 1fr)",}}>
+        <label style={styles.label}>Lens / FOV</label>
+            <select value={lens} onChange={(e) => setLens(e.target.value)} style={styles.select}>
+            <option value="">Not set</option>
+            <option value="fN">Narrow (older models)</option>
+            <option value="fM">Medium (older models)</option>
+            <option value="fW">Wide</option>
+            <option value="fL">Linear</option>
+            <option value="fS">Superview</option>
+            <option value="fV">HyperView (H11-13)</option>
+            <option value="fH">Horizontal Level + Linear (H9-13)</option>
+            <option value="fX">SuperMax Wide (Max Lens Mod)</option>
+          </select>
         </div>
 
         <div style={styles.checkboxRow}>
