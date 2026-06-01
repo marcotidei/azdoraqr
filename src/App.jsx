@@ -138,31 +138,31 @@ export default function App() {
       case "metadata":
         return {
           title: "Reset Labs metadata + reboot",
-          text: "Clears permanent GoPro Labs features/metadata only. \n Normal camera settings are not affected and media is untouched. \n This is the safest reset for removing persistent Labs behavior \n such as BOOT-linked metadata features.",
+          text: "Clears permanent GoPro Labs features/metadata only. Normal camera settings are not affected and media is untouched. this is the safest reset for removing persistent Labs behavior such as BOOT-linked metadata features.",
         };
 
       case "presets":
         return {
           title: "Reset presets",
-          text: "Resets all camera presets to their default values \n and removes any custom presets.",
+          text: "Resets all camera presets to their default values and removes any custom presets.",
         };
 
       case "wifi":
         return {
           title: "Reset Wi‑Fi / connections",
-          text: "Resets wireless connections and \n paired-device connection state back to default settings.",
+          text: "Resets wireless connections and paired-device connection state back to default settings.",
         };
 
       case "factory":
         return {
           title: "Factory reset",
-          text: "Resets the camera to out-of-box settings, \n but keeps the currently installed firmware version.",
+          text: "Resets the camera to out-of-box settings, but keeps the currently installed firmware version.",
         };
 
       case "format":
         return {
           title: "Format SD card",
-          text: "Deletes all files from the SD card. \n Any saved script files stored on the SD card will be removed.",
+          text: "Deletes all files from the SD card. Any saved script files stored on the SD card will be removed.",
         };
 
       default:
@@ -290,7 +290,7 @@ function renderPageControls() {
         </div>
 
         <div style={styles.note}>
-          BOOT only programs the persistent startup behavior.<br />
+          BOOT only programs the persistent startup behavior.
           It does <strong>not</strong> save the schedule body.
         </div>
       </>
@@ -313,7 +313,7 @@ function renderPageControls() {
     return (
       <>
         <div style={styles.note}>
-          This page generates a non-persistent QR code <br /> to trigger an upload now.
+          This page generates a non-persistent QR code to trigger an upload now.
         </div>
       </>
     );
