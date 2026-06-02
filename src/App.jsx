@@ -134,7 +134,7 @@ export default function App() {
   const [enableTusb, setEnableTusb] = useState(true);
   const [enableFast, setEnableFast] = useState(true);
   const [setDefaultPhotoMode, setSetDefaultPhotoMode] = useState(true);
-  const [loadScheduleOnBoot, setLoadScheduleOnBoot] = useState(t
+  const [loadScheduleOnBoot, setLoadScheduleOnBoot] = useState(true);
 
   // Quick tools
   const [quickToolCommand, setQuickToolCommand] = useState("oV0");
@@ -552,7 +552,7 @@ function renderQuickToolsControls() {
       </div>
 
       <div style={styles.footer}>
-        <div style={styles.footerNote}>With love. Marco.</div>
+        <div style={styles.footerNote}>From Marco, with love.</div>
         <a
           href="https://gopro.github.io/labs/control/tech/"
           target="_blank"
