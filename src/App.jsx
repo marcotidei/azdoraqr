@@ -60,31 +60,41 @@ const RESET_INFO = {
   },
 };
 
-const QUICK_TOOL_OPTIONS = [
-  // Beep volume
-  { value: "oV0", label: "Beeps: Muted (oV0)" },
-  { value: "oV1", label: "Beeps: 10% volume (oV1)" },
-  { value: "oV3", label: "Beeps: 30% volume (oV3)" },
-  { value: "oV7", label: "Beeps: 70% volume (oV7)" },
-
-  // Rear LCD brightness
-  { value: "oB0", label: "Rear LCD: 0% brightness (oB0)" },
-  { value: "oB1", label: "Rear LCD: 10% brightness (oB1)" },
-  { value: "oB4", label: "Rear LCD: 40% brightness (oB4)" },
-  { value: "oB7", label: "Rear LCD: 70% brightness (oB7)" },
-  { value: "oB9", label: "Rear LCD: 100% brightness (oB9)" },
-
-  // Front LCD
-  { value: "oF0", label: "Front LCD: Off (oF0)" },
-  { value: "oFU", label: "Front LCD: UI info only (oFU)" },
-  { value: "oFF", label: "Front LCD: Full image (oFF)" },
-  { value: "oFC", label: "Front LCD: Cropped image (oFC)" },
-  { value: "oFN", label: "Front LCD: Never turn off (oFN)" },
-  { value: "oFM", label: "Front LCD: Match rear screen (oFM)" },
-  { value: "oF1", label: "Front LCD: Off in 1 minute (oF1)" },
-  { value: "oF2", label: "Front LCD: Off in 2 minutes (oF2)" },
-  { value: "oF3", label: "Front LCD: Off in 3 minutes (oF3)" },
-  { value: "oF5", label: "Front LCD: Off in 5 minutes (oF5)" },
+const QUICK_TOOL_GROUPS = [
+  {
+    label: "Beeps",
+    options: [
+      { value: "oV0", label: "Muted (oV0)" },
+      { value: "oV1", label: "10% volume (oV1)" },
+      { value: "oV3", label: "30% volume (oV3)" },
+      { value: "oV7", label: "70% volume (oV7)" },
+    ],
+  },
+  {
+    label: "Rear LCD Brightness",
+    options: [
+      { value: "oB0", label: "0% brightness (oB0)" },
+      { value: "oB1", label: "10% brightness (oB1)" },
+      { value: "oB4", label: "40% brightness (oB4)" },
+      { value: "oB7", label: "70% brightness (oB7)" },
+      { value: "oB9", label: "100% brightness (oB9)" },
+    ],
+  },
+  {
+    label: "Front LCD",
+    options: [
+      { value: "oF0", label: "Off (oF0)" },
+      { value: "oFU", label: "UI info only (oFU)" },
+      { value: "oFF", label: "Full image (oFF)" },
+      { value: "oFC", label: "Cropped image (oFC)" },
+      { value: "oFN", label: "Never turn off (oFN)" },
+      { value: "oFM", label: "Match rear screen (oFM)" },
+      { value: "oF1", label: "Off in 1 minute (oF1)" },
+      { value: "oF2", label: "Off in 2 minutes (oF2)" },
+      { value: "oF3", label: "Off in 3 minutes (oF3)" },
+      { value: "oF5", label: "Off in 5 minutes (oF5)" },
+    ],
+  },
 ];
 
 // ─── Pure utilities ───────────────────────────────────────────────────────────
@@ -453,17 +463,21 @@ function renderQuickToolsControls() {
       <>
         <div style={fieldGrid}>
           <label style={styles.label}>Quick command</label>
-          <select
-            value={quickToolCommand}
-            onChange={(e) => setQuickToolCommand(e.target.value)}
-            style={styles.select}
-          >
-            {QUICK_TOOL_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value}>
-                {o.label}
-              </option>
-            ))}
-          </select>
+            <select
+              value={quickToolCommand}
+              onChange={(e) => setQuickToolCommand(e.target.value)}
+              style={styles.select}
+            >
+              {QUICK_TOOL_GROUPS.map((group) => (
+                <optgroup key={group.label} label={group.label}>
+                  {group.options.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </optgroup>
+              ))}
+            </select>
         </div>
 
         <div style={styles.checkboxRow}>
