@@ -60,6 +60,33 @@ const RESET_INFO = {
   },
 };
 
+const QUICK_TOOL_OPTIONS = [
+  // Beep volume
+  { value: "oV0", label: "Beeps: Muted (oV0)" },
+  { value: "oV1", label: "Beeps: 10% volume (oV1)" },
+  { value: "oV3", label: "Beeps: 30% volume (oV3)" },
+  { value: "oV7", label: "Beeps: 70% volume (oV7)" },
+
+  // Rear LCD brightness
+  { value: "oB0", label: "Rear LCD: 0% brightness (oB0)" },
+  { value: "oB1", label: "Rear LCD: 10% brightness (oB1)" },
+  { value: "oB4", label: "Rear LCD: 40% brightness (oB4)" },
+  { value: "oB7", label: "Rear LCD: 70% brightness (oB7)" },
+  { value: "oB9", label: "Rear LCD: 100% brightness (oB9)" },
+
+  // Front LCD
+  { value: "oF0", label: "Front LCD: Off (oF0)" },
+  { value: "oFU", label: "Front LCD: UI info only (oFU)" },
+  { value: "oFF", label: "Front LCD: Full image (oFF)" },
+  { value: "oFC", label: "Front LCD: Cropped image (oFC)" },
+  { value: "oFN", label: "Front LCD: Never turn off (oFN)" },
+  { value: "oFM", label: "Front LCD: Match rear screen (oFM)" },
+  { value: "oF1", label: "Front LCD: Off in 1 minute (oF1)" },
+  { value: "oF2", label: "Front LCD: Off in 2 minutes (oF2)" },
+  { value: "oF3", label: "Front LCD: Off in 3 minutes (oF3)" },
+  { value: "oF5", label: "Front LCD: Off in 5 minutes (oF5)" },
+];
+
 // ─── Pure utilities ───────────────────────────────────────────────────────────
 
 function addMinutes(time, minutes) {
@@ -82,7 +109,7 @@ function intervalToLabs(interval) {
 
 export default function App() {
   // Navigation
-  const [page, setPage] = useState("boot"); // boot | schedule | uploadTest | reset
+  const [page, setPage] = useState("boot"); // boot | schedule | quickTools | reset
 
   // Schedule settings
   const [days, setDays] = useState(ALL_DAYS);
@@ -108,6 +135,10 @@ export default function App() {
   const [enableFast, setEnableFast] = useState(true);
   const [setDefaultPhotoMode, setSetDefaultPhotoMode] = useState(true);
   const [loadScheduleOnBoot, setLoadScheduleOnBoot] = useState(t
+
+  // Quick tools
+  const [quickToolCommand, setQuickToolCommand] = useState("oV0");
+  const [quickToolPermanent, setQuickToolPermanent] = useState(false);
 
   // Reset settings
   const [resetType, setResetType] = useState("metadata");
@@ -140,11 +171,6 @@ export default function App() {
       setUploadTime(minimumUploadTime);
     }
   }, [end, upload, uploadTime]);
-
-  // Guard: uploadTest page requires upload enabled
-  useEffect(() => {
-    if (!upload && page === "uploadTest") setPage("schedule");
-  }, [upload, page]);
 
   // ─── Event handlers ────────────────────────────────────────────────────────
 
@@ -214,8 +240,10 @@ export default function App() {
     return script;
   }
 
-  function generateUploadTestScript() {
-    return '"Upload Test"+!5U';
+  function generateQuickToolScript() {
+    return quickToolPermanent
+      ? `*${quickToolCommand}`
+      : quickToolCommand;
   }
 
   function generateResetScript() {
@@ -232,7 +260,7 @@ export default function App() {
   function generateScript() {
     if (page === "boot")       return generateBootScript();
     if (page === "schedule")   return generateScheduleScript();
-    if (page === "uploadTest") return generateUploadTestScript();
+    if (page === "quickTools") return generateQuickToolScript();
     return generateResetScript();
   }
 
@@ -420,11 +448,43 @@ export default function App() {
     );
   }
 
-  function renderUploadTestControls() {
+function renderQuickToolsControls() {
     return (
-      <div style={styles.note}>
-        This page generates a non-persistent QR code to trigger an upload now.
-      </div>
+      <>
+        <div style={fieldGrid}>
+          <label style={styles.label}>Quick command</label>
+          <select
+            value={quickToolCommand}
+            onChange={(e) => setQuickToolCommand(e.target.value)}
+            style={styles.select}
+          >
+            {QUICK_TOOL_OPTIONS.map((o) => (
+              <option key={o.value} value={o.value}>
+                {o.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div style={styles.checkboxRow}>
+          <label>
+            <input
+              type="checkbox"
+              checked={quickToolPermanent}
+              onChange={(e) => setQuickToolPermanent(e.target.checked)}
+            />{" "}
+            Make command permanent
+          </label>
+        </div>
+
+        <div style={styles.note}>
+          This page generates a single utility QR command.
+          <br />
+          <strong>Unchecked</strong>: execute once only
+          <br />
+          <strong>Checked</strong>: save as permanent metadata-style command
+        </div>
+      </>
     );
   }
 
@@ -457,7 +517,7 @@ export default function App() {
   function renderPageControls() {
     if (page === "boot")       return renderBootControls();
     if (page === "schedule")   return renderScheduleControls();
-    if (page === "uploadTest") return renderUploadTestControls();
+    if (page === "quickTools") return renderQuickToolsControls();
     return renderResetControls();
   }
 
@@ -470,9 +530,8 @@ export default function App() {
       <div style={styles.tabs}>
         <button style={page === "boot"     ? styles.activeTab : styles.tab} onClick={() => setPage("boot")}>1. BOOT</button>
         <button style={page === "schedule" ? styles.activeTab : styles.tab} onClick={() => setPage("schedule")}>2. SCHEDULE</button>
-        {upload && (
-          <button style={page === "uploadTest" ? styles.activeTab : styles.tab} onClick={() => setPage("uploadTest")}>3. UPLOAD TEST</button>
-        )}
+        <button style={page === "quickTools" ? styles.activeTab : styles.tab} onClick={() => setPage("quickTools")}>3. QUICK TOOLS</button>
+
         <button style={page === "reset" ? styles.resetActiveTab : styles.resetTab} onClick={() => setPage("reset")}>RESET</button>
       </div>
 
