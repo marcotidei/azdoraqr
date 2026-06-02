@@ -544,7 +544,7 @@ function renderQuickToolsControls() {
       <div style={styles.tabs}>
         <button style={page === "boot"     ? styles.activeTab : styles.tab} onClick={() => setPage("boot")}>1. BOOT</button>
         <button style={page === "schedule" ? styles.activeTab : styles.tab} onClick={() => setPage("schedule")}>2. SCHEDULE</button>
-        <button style={page === "quickTools" ? styles.activeTab : styles.tab} onClick={() => setPage("quickTools")}>3. QUICK TOOLS</button>
+        <button style={page === "quickTools" ? styles.activeTab : styles.tab} onClick={() => setPage("quickTools")}>QUICK TOOLS</button>
 
         <button style={page === "reset" ? styles.resetActiveTab : styles.resetTab} onClick={() => setPage("reset")}>RESET</button>
       </div>
