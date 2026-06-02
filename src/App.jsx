@@ -68,6 +68,7 @@ const QUICK_TOOL_GROUPS = [
       { value: "oV1", label: "10% volume (oV1)" },
       { value: "oV3", label: "30% volume (oV3)" },
       { value: "oV7", label: "70% volume (oV7)" },
+      { value: "oV9", label: "100% volume (oV9)" },
     ],
   },
   {
