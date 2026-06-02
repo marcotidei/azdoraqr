@@ -154,7 +154,7 @@ export default function App() {
   const [loadScheduleOnBoot, setLoadScheduleOnBoot] = useState(true);
 
   // Quick tools
-  const [quickToolCommand, setQuickToolCommand] = useState("oV0");
+  const [quickToolCommand, setQuickToolCommand] = useState("__upload_now__");
   const [quickToolPermanent, setQuickToolPermanent] = useState(false);
   const [quickToolUploadTimeout, setQuickToolUploadTimeout] = useState("");
 
@@ -195,6 +195,14 @@ export default function App() {
     return quickToolCommand === "__upload_now__";
   }
  
+  function isQuickToolUpload() {
+    return quickToolCommand === "__upload_now__";
+  }
+
+  function quickToolSupportsPermanent() {
+    return ["__some_future_metadata_command__"].includes(quickToolCommand);
+  }
+  
   // ─── Event handlers ────────────────────────────────────────────────────────
 
   function toggleDay(day) {
@@ -266,12 +274,16 @@ export default function App() {
   function generateQuickToolScript() {
     if (quickToolCommand === "__upload_now__") {
       const timeoutSuffix = quickToolUploadTimeout ? String(quickToolUploadTimeout) : "";
-      return `"Upload Test"+!5U${timeoutSuffix}`;
+      return `!5U${timeoutSuffix}`;
     }
 
-    return quickToolPermanent
-      ? `*${quickToolCommand}`
-      : quickToolCommand;
+    if (quickToolSupportsPermanent()) {
+      return quickToolPermanent
+        ? `*${quickToolCommand}`
+        : quickToolCommand;
+    }
+
+    return quickToolCommand;
   }
 
   function generateResetScript() {
@@ -511,7 +523,7 @@ export default function App() {
           </div>
         )}
 
-        {!isQuickToolUpload() && (
+        {!isQuickToolUpload() && quickToolSupportsPermanent() && (
           <div style={styles.checkboxRow}>
             <label>
               <input
