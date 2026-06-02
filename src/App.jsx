@@ -62,6 +62,12 @@ const RESET_INFO = {
 
 const QUICK_TOOL_GROUPS = [
   {
+    label: "Upload",
+    options: [
+      { value: "__upload_now__", label: "Upload now" },
+    ],
+  },
+  {
     label: "Beeps",
     options: [
       { value: "oV0", label: "Muted (oV0)" },
@@ -150,6 +156,7 @@ export default function App() {
   // Quick tools
   const [quickToolCommand, setQuickToolCommand] = useState("oV0");
   const [quickToolPermanent, setQuickToolPermanent] = useState(false);
+  const [quickToolUploadTimeout, setQuickToolUploadTimeout] = useState("");
 
   // Reset settings
   const [resetType, setResetType] = useState("metadata");
@@ -183,6 +190,11 @@ export default function App() {
     }
   }, [end, upload, uploadTime]);
 
+  // If quick tool is upload, force it to be one-shot (not permanent)
+  function isQuickToolUpload() {
+    return quickToolCommand === "__upload_now__";
+  }
+ 
   // ─── Event handlers ────────────────────────────────────────────────────────
 
   function toggleDay(day) {
@@ -252,6 +264,11 @@ export default function App() {
   }
 
   function generateQuickToolScript() {
+    if (quickToolCommand === "__upload_now__") {
+      const timeoutSuffix = quickToolUploadTimeout ? String(quickToolUploadTimeout) : "";
+      return `"Upload Test"+!5U${timeoutSuffix}`;
+    }
+
     return quickToolPermanent
       ? `*${quickToolCommand}`
       : quickToolCommand;
@@ -459,49 +476,74 @@ export default function App() {
     );
   }
 
-function renderQuickToolsControls() {
+  function renderQuickToolsControls() {
     return (
       <>
         <div style={fieldGrid}>
           <label style={styles.label}>Quick command</label>
-            <select
-              value={quickToolCommand}
-              onChange={(e) => setQuickToolCommand(e.target.value)}
-              style={styles.select}
-            >
-              {QUICK_TOOL_GROUPS.map((group) => (
-                <optgroup key={group.label} label={group.label}>
-                  {group.options.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </optgroup>
-              ))}
-            </select>
+          <select
+            value={quickToolCommand}
+            onChange={(e) => setQuickToolCommand(e.target.value)}
+            style={styles.select}
+          >
+            {QUICK_TOOL_GROUPS.map((group) => (
+              <optgroup key={group.label} label={group.label}>
+                {group.options.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </optgroup>
+            ))}
+          </select>
         </div>
 
-        <div style={styles.checkboxRow}>
-          <label>
+        {isQuickToolUpload() && (
+          <div style={fieldGrid}>
+            <label style={styles.label}>Upload Timeout (minutes)</label>
             <input
-              type="checkbox"
-              checked={quickToolPermanent}
-              onChange={(e) => setQuickToolPermanent(e.target.checked)}
-            />{" "}
-            Make command permanent
-          </label>
-        </div>
+              type="number"
+              min="1"
+              value={quickToolUploadTimeout}
+              onChange={(e) => setQuickToolUploadTimeout(e.target.value)}
+              style={styles.input}
+            />
+          </div>
+        )}
+
+        {!isQuickToolUpload() && (
+          <div style={styles.checkboxRow}>
+            <label>
+              <input
+                type="checkbox"
+                checked={quickToolPermanent}
+                onChange={(e) => setQuickToolPermanent(e.target.checked)}
+              />{" "}
+              Make command permanent
+            </label>
+          </div>
+        )}
 
         <div style={styles.note}>
-          This page generates a single utility QR command.
-          <br />
-          <strong>Unchecked</strong>: execute once only
-          <br />
-          <strong>Checked</strong>: save as permanent metadata-style command
+          {isQuickToolUpload() ? (
+            <>
+              This generates a one-shot upload QR.
+              <br />
+              It is executed once and is not saved permanently.
+            </>
+          ) : (
+            <>
+              This page generates a single utility QR command.
+              <br />
+              <strong>Unchecked</strong>: execute once only
+              <br />
+              <strong>Checked</strong>: save as permanent metadata-style command
+            </>
+          )}
         </div>
       </>
     );
-  }
+  } 
 
   function renderResetControls() {
     const resetInfo = RESET_INFO[resetType] ?? RESET_INFO.metadata;
