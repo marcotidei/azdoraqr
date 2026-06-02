@@ -106,6 +106,8 @@ export default function App() {
   const [gpsSync, setGpsSync] = useState(true);
   const [enableTusb, setEnableTusb] = useState(true);
   const [enableFast, setEnableFast] = useState(true);
+  const [setDefaultPhotoMode, setSetDefaultPhotoMode] = useState(true);
+  const [loadScheduleOnBoot, setLoadScheduleOnBoot] = useState(t
 
   // Reset settings
   const [resetType, setResetType] = useState("metadata");
@@ -179,11 +181,13 @@ export default function App() {
 
   function generateBootScript() {
     let script = "";
+
     if (enableTusb) script += "*TUSB=1";
     if (enableFast) script += "*FAST=1";
-    script += "dP";
+    if (setDefaultPhotoMode) script += "dP";
     if (gpsSync) script += "*SYNC=1";
-    script += '*BOOT="!Lsch"';
+    if (loadScheduleOnBoot) script += '*BOOT="!Lsch"';
+
     return script;
   }
 
@@ -244,22 +248,56 @@ export default function App() {
       <>
         <div style={styles.checkboxRow}>
           <label>
-            <input type="checkbox" checked={enableTusb} onChange={(e) => setEnableTusb(e.target.checked)} />{" "}
+            <input
+              type="checkbox"
+              checked={enableTusb}
+              onChange={(e) => setEnableTusb(e.target.checked)}
+            />{" "}
             Enable USB Power Support
           </label>
         </div>
 
         <div style={styles.checkboxRow}>
           <label>
-            <input type="checkbox" checked={enableFast} onChange={(e) => setEnableFast(e.target.checked)} />{" "}
+            <input
+              type="checkbox"
+              checked={enableFast}
+              onChange={(e) => setEnableFast(e.target.checked)}
+            />{" "}
             Enable Fast Boot
           </label>
         </div>
 
         <div style={styles.checkboxRow}>
           <label>
-            <input type="checkbox" checked={gpsSync} onChange={(e) => setGpsSync(e.target.checked)} />{" "}
+            <input
+              type="checkbox"
+              checked={gpsSync}
+              onChange={(e) => setGpsSync(e.target.checked)}
+            />{" "}
             Enable GPS clock sync
+          </label>
+        </div>
+
+        <div style={styles.checkboxRow}>
+          <label>
+            <input
+              type="checkbox"
+              checked={setDefaultPhotoMode}
+              onChange={(e) => setSetDefaultPhotoMode(e.target.checked)}
+            />{" "}
+            Set default Photo Mode (dP)
+          </label>
+        </div>
+
+        <div style={styles.checkboxRow}>
+          <label>
+            <input
+              type="checkbox"
+              checked={loadScheduleOnBoot}
+              onChange={(e) => setLoadScheduleOnBoot(e.target.checked)}
+            />{" "}
+            Auto-load saved schedule on boot (*BOOT="!Lsch")
           </label>
         </div>
 
