@@ -33,6 +33,9 @@ Commands are generated according to GoPro Labs syntax
 Execution behavior depends on camera model and firmware
 Scheduling scripts are stored and executed by the camera
 
+# Compatibility
+Tested on GoPro Hero 13.
+
 ### Reference
 GoPro Labs documentation: https://gopro.github.io/labs/control/tech/
 
