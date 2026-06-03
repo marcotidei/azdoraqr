@@ -22,11 +22,11 @@ Automatic GoPro Cloud upload after capture
 The schedule is converted into a valid GoPro Labs script and stored in a format that can be executed directly by the camera.
 
 ## How To Use It
-1. Reset the GoPro to facrory and clear previous metadata stored in the camera for a clean start.
-2. Configure the camera via Quick app and disable Auto Upload in cloud settings if planning to use GoPro cloud.
-3. Scan the BOOT scrip keeping default settimgs if unsure.
-4. Configure you schedule and make sure you have a formatted SD card installed before scan the SCHEDULE script (NOTE: the achedule script is store in the SD, if uou for at it you need to scan the SCHEDULE again).
-5. Reboot the camera to run the script.
+1. Reset the GoPro to facrory and clear previous metadata stored in the camera for a clean start
+2. Configure the camera via Quick app and disable Auto Upload in cloud settings if planning to use GoPro cloud
+3. Scan the BOOT scrip keeping default settimgs if unsure
+4. Configure you schedule and make sure you have a formatted SD card installed before scan the SCHEDULE script. (NOTE: The schedule script is stored in the SD, if you format it you need to scan the SCHEDULE script again)
+6. Reboot the camera to run the script
 
 ## Notes
 Commands are generated according to GoPro Labs syntax
