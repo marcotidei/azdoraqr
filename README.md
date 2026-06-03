@@ -1,5 +1,3 @@
-Here’s a rewritten, cleaner and more focused README.md aligned with your intent:
-
 azdòra QR
 azdòra QR is a web application designed to configure GoPro cameras running GoPro Labs firmware without requiring knowledge of the underlying command language.
 It provides a simple interface to generate valid QR codes that translate directly into GoPro Labs commands, making advanced camera automation accessible and reliable.
