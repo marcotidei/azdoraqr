@@ -21,7 +21,7 @@ Capture interval
 Automatic GoPro Cloud upload after capture
 The schedule is converted into a valid GoPro Labs script and stored in a format that can be executed directly by the camera.
 
-## How It Works
+## How To Use It
 1. Reset to facrory and clear previous metadata stored in the camera for a clean start.
 2. Configure the camera via Quick app and disable Auto Upload in cloud settings if planning to use GoPro cloud.
 3. Scan the BOOT scrip keeping default settimgs if unsure.
