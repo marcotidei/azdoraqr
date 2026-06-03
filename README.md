@@ -22,20 +22,11 @@ Automatic GoPro Cloud upload after capture
 The schedule is converted into a valid GoPro Labs script and stored in a format that can be executed directly by the camera.
 
 ## How It Works
-Configure the desired behavior using the interface
-The application generates the corresponding GoPro Labs command
-A QR code is created instantly
-Scan the QR code with the camera to apply the configuration
-All processing is performed locally in the browser.
-
-Screenshot
-./screenshot.png
-
-## Technical Overview
-Built with React
-Uses qrcode.react for QR generation
-No backend required
-Fully client-side
+1. Reset to facrory and clear prevous metadata stores in the camera for a clean start.
+2. Configure the camera via Quick app and disable Auto Upload in cloud settings if planning to use GoPro cloud.
+3. Scan the BOOT scrip keeping default settimgs if unsure.
+4. Configure you schedule and make sure you have a formatted SD card installed before scan the SCHEDULE scripr.
+5. Reboot the camera to run the script.
 
 ## Notes
 Commands are generated according to GoPro Labs syntax
