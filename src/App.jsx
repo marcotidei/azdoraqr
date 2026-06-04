@@ -697,6 +697,7 @@ title: {
     gap: 10,
     marginBottom: 20,
     flexWrap: "wrap",
+    justifyContent: "center",
   },
   tab: {
     padding: "10px 14px",
@@ -837,7 +838,6 @@ title: {
     color: "#8ab4ff",
     textDecoration: "none",
   },
-
   headerRow: {
     display: "flex",
     justifyContent: "space-between",
