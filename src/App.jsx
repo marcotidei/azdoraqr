@@ -101,18 +101,6 @@ const QUICK_TOOL_GROUPS = [
     ],
   },
   {
-    label: "Voice Commands",
-    options: [
-      { value: "v0", label: "Off (v0)" },
-    ],
-  },
-  {
-    label: "LEDs",
-    options: [
-      { value: "oD0", label: "All LEDs off (oD0)" },
-    ],
-  },
-  {
     label: "Front LCD",
     options: [
       { value: "oF0", label: "Off (oF0)" },
@@ -125,6 +113,18 @@ const QUICK_TOOL_GROUPS = [
       { value: "oF2", label: "Off in 2 minutes (oF2)" },
       { value: "oF3", label: "Off in 3 minutes (oF3)" },
       { value: "oF5", label: "Off in 5 minutes (oF5)" },
+    ],
+  },
+  {
+    label: "Voice Commands",
+    options: [
+      { value: "v0", label: "Off (v0)" },
+    ],
+  },
+  {
+    label: "LEDs",
+    options: [
+      { value: "oD0", label: "All LEDs off (oD0)" },
     ],
   },
 ];
