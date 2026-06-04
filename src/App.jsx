@@ -29,18 +29,11 @@ const ALL_CAMERAS = ["hero10", "hero11", "hero11mini", "hero12", "hero13"];
 
 const LENS_OPTIONS = [
   { value: "",   label: "Not set", compatible: ALL_CAMERAS },
-  { value: "fN", label: "Narrow (older models)", compatible: ALL_CAMERAS },
-  { value: "fM", label: "Medium (older models)", compatible: ALL_CAMERAS },
+
+  // Photo / timelapse lenses only
+  { value: "fN", label: "Narrow", compatible: ["hero10"] },
   { value: "fW", label: "Wide", compatible: ALL_CAMERAS },
   { value: "fL", label: "Linear", compatible: ALL_CAMERAS },
-  { value: "fS", label: "Superview", compatible: ALL_CAMERAS },
-
-  // newer / filtered
-  { value: "fV", label: "HyperView (H11-13)", compatible: ["hero11", "hero11mini", "hero12", "hero13"] },
-
-  // keep these visible for now
-  { value: "fH", label: "Horizontal Level + Linear", compatible: ALL_CAMERAS },
-  { value: "fX", label: "SuperMax Wide (Max Lens Mod)", compatible: ALL_CAMERAS },
 ];
 
 const RESET_OPTIONS = [
@@ -449,7 +442,7 @@ export default function App() {
 
         {/* Lens */}
         <div style={fieldGrid}>
-          <label style={styles.label}>Lens / FOV</label>
+          <label style={styles.label}>Photo Lens / FOV</label>
           <select value={lens} onChange={(e) => setLens(e.target.value)} style={styles.select}>
             {filteredLensOptions.map((o) => (
               <option key={o.value} value={o.value}>
@@ -623,15 +616,15 @@ export default function App() {
 
   return (
       <div style={styles.container}>
-        <h1 style={styles.title}>👵🏼&nbsp;&nbsp;&nbsp;azdòra QR</h1>
+        <div style={styles.headerRow}>
+          <h1 style={styles.title}>👵🏼&nbsp;azdòra QR</h1>
 
-        <div style={{ ...styles.panel, marginBottom: 16 }}>
-          <div style={fieldGrid}>
-            <label style={styles.label}>Camera Model</label>
+          <div style={styles.cameraInline}>
+            <label style={styles.cameraLabel}>Camera</label>
             <select
               value={cameraModel}
               onChange={(e) => setCameraModel(e.target.value)}
-              style={styles.select}
+              style={styles.cameraSelect}
             >
               {CAMERA_OPTIONS.map((camera) => (
                 <option key={camera.value} value={camera.value}>
@@ -641,6 +634,7 @@ export default function App() {
             </select>
           </div>
         </div>
+
 
         <div style={styles.tabs}>
         <button style={page === "boot"     ? styles.activeTab : styles.tab} onClick={() => setPage("boot")}>1. BOOT</button>
@@ -692,7 +686,8 @@ const styles = {
   },
   title: {
     fontSize: 32,
-    marginBottom: 20,
+    margin: 0,
+    lineHeight: 1,
     color: "#ffffff",
     fontWeight: "700",
   },
@@ -840,5 +835,45 @@ const styles = {
   footerLink: {
     color: "#8ab4ff",
     textDecoration: "none",
+  },
+
+  headerRow: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "flex-end",
+    gap: 16,
+    marginBottom: 16,
+    flexWrap: "wrap",
+  },
+  cameraSelectorWrap: {
+    display: "flex",
+    alignItems: "center",
+    gap: 8,
+    background: "#ffffff",
+    padding: "6px 10px",
+    border: "1px solid #ddd",
+    borderRadius: 8,
+  },
+  cameraLabel: {
+    fontSize: 13,
+    color: "#292929",
+    whiteSpace: "nowrap",
+  },
+cameraSelect: {
+  minWidth: 170,
+  maxWidth: 220,
+  color: "#111",
+  backgroundColor: "#fff",
+  border: "1px solid #ccc",
+  borderRadius: 6,
+  padding: "4px 10px",
+  fontSize: 14,
+  WebkitAppearance: "menulist",
+  appearance: "menulist",
+},
+  cameraInline: {
+    display: "flex",
+    alignItems: "flex-end",
+    gap: 8,
   },
 };
