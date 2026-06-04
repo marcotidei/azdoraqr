@@ -138,11 +138,12 @@ export default function App() {
   // Camera selection
   const [cameraModel, setCameraModel] = useState("hero10");
 
-  // Schedule settings
+// Schedule settings
   const [days, setDays] = useState(ALL_DAYS);
   const [start, setStart] = useState("07:00");
   const [end, setEnd] = useState("19:00");
   const [interval, setInterval] = useState(20);
+  const [enforcePhotoMode, setEnforcePhotoMode] = useState(true);
   const [lens, setLens] = useState("fW");
 
   // Upload settings
@@ -277,6 +278,7 @@ export default function App() {
     let script = `!SAVEsch=>${wakeTime}<${stopTime}+`;
     if (dayFilter) script += dayFilter;
     script += `!1N`;
+    if (enforcePhotoMode) script += `+mP`;
     if (lens) script += `+${lens}`;
     if (powerSaveCommands.length) script += `+${powerSaveCommands.join("+")}`;
     script += `+!S+!1N+!${intervalToLabs(interval)}`;
@@ -438,6 +440,17 @@ export default function App() {
         <div style={fieldGrid}>
           <label style={styles.label}>Interval (minutes)</label>
           <input type="number" min="1" value={interval} onChange={(e) => setInterval(Number(e.target.value))} style={styles.input} />
+        </div>
+
+        <div style={styles.checkboxRow}>
+          <label>
+            <input
+              type="checkbox"
+              checked={enforcePhotoMode}
+              onChange={(e) => setEnforcePhotoMode(e.target.checked)}
+            />{" "}
+            Enforce Photo Mode (mP)
+          </label>
         </div>
 
         {/* Lens */}
