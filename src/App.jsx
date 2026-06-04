@@ -95,6 +95,24 @@ const QUICK_TOOL_GROUPS = [
     ],
   },
   {
+    label: "Screen Saver",
+    options: [
+      { value: "oS1", label: "Off in 1 minute (oS1)" },
+    ],
+  },
+  {
+    label: "Voice Commands",
+    options: [
+      { value: "v0", label: "Off (v0)" },
+    ],
+  },
+  {
+    label: "LEDs",
+    options: [
+      { value: "oD0", label: "All LEDs off (oD0)" },
+    ],
+  },
+  {
     label: "Front LCD",
     options: [
       { value: "oF0", label: "Off (oF0)" },
@@ -110,6 +128,7 @@ const QUICK_TOOL_GROUPS = [
     ],
   },
 ];
+
 
 // ─── Pure utilities ───────────────────────────────────────────────────────────
 
@@ -150,12 +169,6 @@ export default function App() {
   const [upload, setUpload] = useState(true);
   const [uploadTime, setUploadTime] = useState("19:05");
   const [uploadTimeout, setUploadTimeout] = useState("");
-
-  // Power save settings
-  const [screenTimeout1m, setScreenTimeout1m] = useState(true);
-  const [lcd10, setLcd10] = useState(false);
-  const [voiceOff, setVoiceOff] = useState(false);
-  const [ledsOff, setLedsOff] = useState(false);
 
   // Boot settings
   const [gpsSync, setGpsSync] = useState(true);
@@ -245,18 +258,6 @@ export default function App() {
     return `=Tt:W=(${conditions})>`;
   }
 
-  function buildPowerSaveCommands() {
-    const optionParts = [];
-    if (screenTimeout1m) optionParts.push("S1");
-    if (lcd10)           optionParts.push("B1");
-    if (ledsOff)         optionParts.push("D0");
-
-    const commands = [];
-    if (optionParts.length) commands.push(`o${optionParts.join("")}`);
-    if (voiceOff)          commands.push("v0");
-    return commands;
-  }
-
   function generateBootScript() {
     let script = "";
 
@@ -273,15 +274,11 @@ export default function App() {
     const wakeTime = addMinutes(start, -1);
     const stopTime = addMinutes(end, 1);
     const dayFilter = buildDayFilter();
-    const powerSaveCommands = buildPowerSaveCommands();
 
     let script = `!SAVEsch=>${wakeTime}<${stopTime}+`;
     if (dayFilter) script += dayFilter;
     script += `!1N`;
     if (enforcePhotoMode) script += `+mP`;
-    if (lens) script += `+${lens}`;
-    if (powerSaveCommands.length) script += `+${powerSaveCommands.join("+")}`;
-    script += `+!S+!1N+!${intervalToLabs(interval)}`;
 
     if (upload) {
       const timeoutSuffix = uploadTimeout ? String(uploadTimeout) : "";
@@ -486,35 +483,6 @@ export default function App() {
             </div>
           </>
         )}
-
-        {/* Power save */}
-        <div style={styles.checkboxRow}>
-          <label>
-            <input type="checkbox" checked={screenTimeout1m} onChange={(e) => setScreenTimeout1m(e.target.checked)} />{" "}
-            Screen auto-off after 1 minute (oS1)
-          </label>
-        </div>
-
-        <div style={styles.checkboxRow}>
-          <label>
-            <input type="checkbox" checked={lcd10} onChange={(e) => setLcd10(e.target.checked)} />{" "}
-            LCD brightness 10% (oB1)
-          </label>
-        </div>
-
-        <div style={styles.checkboxRow}>
-          <label>
-            <input type="checkbox" checked={voiceOff} onChange={(e) => setVoiceOff(e.target.checked)} />{" "}
-            Voice commands off (v0)
-          </label>
-        </div>
-
-        <div style={styles.checkboxRow}>
-          <label>
-            <input type="checkbox" checked={ledsOff} onChange={(e) => setLedsOff(e.target.checked)} />{" "}
-            All LEDs off (oD0)
-          </label>
-        </div>
 
         <div style={styles.note}>
           SCHEDULE saves the script into <code>sch</code> using <code>!SAVEsch=...</code>.
