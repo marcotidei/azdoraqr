@@ -17,16 +17,30 @@ const ALL_DAYS = DAYS.map((d) => d.value);
 const WEEKDAYS = [1, 2, 3, 4, 5];
 const WEEKEND = [0, 6];
 
+const CAMERA_OPTIONS = [
+  { value: "hero10", label: "HERO10 Black" },
+  { value: "hero11", label: "HERO11 Black" },
+  { value: "hero11mini", label: "HERO11 Black Mini" },
+  { value: "hero12", label: "HERO12 Black" },
+  { value: "hero13", label: "HERO13 Black" },
+];
+
+const ALL_CAMERAS = ["hero10", "hero11", "hero11mini", "hero12", "hero13"];
+
 const LENS_OPTIONS = [
-  { value: "",   label: "Not set" },
-  { value: "fN", label: "Narrow (older models)" },
-  { value: "fM", label: "Medium (older models)" },
-  { value: "fW", label: "Wide" },
-  { value: "fL", label: "Linear" },
-  { value: "fS", label: "Superview" },
-  { value: "fV", label: "HyperView (H11-13)" },
-  { value: "fH", label: "Horizontal Level + Linear (H9-13)" },
-  { value: "fX", label: "SuperMax Wide (Max Lens Mod)" },
+  { value: "",   label: "Not set", compatible: ALL_CAMERAS },
+  { value: "fN", label: "Narrow (older models)", compatible: ALL_CAMERAS },
+  { value: "fM", label: "Medium (older models)", compatible: ALL_CAMERAS },
+  { value: "fW", label: "Wide", compatible: ALL_CAMERAS },
+  { value: "fL", label: "Linear", compatible: ALL_CAMERAS },
+  { value: "fS", label: "Superview", compatible: ALL_CAMERAS },
+
+  // newer / filtered
+  { value: "fV", label: "HyperView (H11-13)", compatible: ["hero11", "hero11mini", "hero12", "hero13"] },
+
+  // keep these visible for now
+  { value: "fH", label: "Horizontal Level + Linear", compatible: ALL_CAMERAS },
+  { value: "fX", label: "SuperMax Wide (Max Lens Mod)", compatible: ALL_CAMERAS },
 ];
 
 const RESET_OPTIONS = [
@@ -125,8 +139,11 @@ function intervalToLabs(interval) {
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function App() {
-  // Navigation
+// Navigation
   const [page, setPage] = useState("boot"); // boot | schedule | quickTools | reset
+
+  // Camera selection
+  const [cameraModel, setCameraModel] = useState("hero10");
 
   // Schedule settings
   const [days, setDays] = useState(ALL_DAYS);
@@ -194,15 +211,25 @@ export default function App() {
   function isQuickToolUpload() {
     return quickToolCommand === "__upload_now__";
   }
- 
-  function isQuickToolUpload() {
-    return quickToolCommand === "__upload_now__";
-  }
 
   function quickToolSupportsPermanent() {
-    return ["__some_future_metadata_command__"].includes(quickToolCommand);
+    return !isQuickToolUpload();
   }
   
+  const filteredLensOptions = LENS_OPTIONS.filter((option) =>
+    option.compatible.includes(cameraModel)
+  );
+
+  useEffect(() => {
+    const allowedValues = LENS_OPTIONS
+      .filter((option) => option.compatible.includes(cameraModel))
+      .map((option) => option.value);
+
+    if (!allowedValues.includes(lens)) {
+      setLens("fW");
+    }
+  }, [cameraModel, lens]);
+
   // ─── Event handlers ────────────────────────────────────────────────────────
 
   function toggleDay(day) {
@@ -424,8 +451,10 @@ export default function App() {
         <div style={fieldGrid}>
           <label style={styles.label}>Lens / FOV</label>
           <select value={lens} onChange={(e) => setLens(e.target.value)} style={styles.select}>
-            {LENS_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value}>{o.label}</option>
+            {filteredLensOptions.map((o) => (
+              <option key={o.value} value={o.value}>
+                {o.label}
+              </option>
             ))}
           </select>
         </div>
@@ -593,10 +622,27 @@ export default function App() {
   // ─── JSX ──────────────────────────────────────────────────────────────────
 
   return (
-    <div style={styles.container}>
-      <h1 style={styles.title}>👵🏼&nbsp;&nbsp;&nbsp;azdòra QR</h1>
+      <div style={styles.container}>
+        <h1 style={styles.title}>👵🏼&nbsp;&nbsp;&nbsp;azdòra QR</h1>
 
-      <div style={styles.tabs}>
+        <div style={{ ...styles.panel, marginBottom: 16 }}>
+          <div style={fieldGrid}>
+            <label style={styles.label}>Camera Model</label>
+            <select
+              value={cameraModel}
+              onChange={(e) => setCameraModel(e.target.value)}
+              style={styles.select}
+            >
+              {CAMERA_OPTIONS.map((camera) => (
+                <option key={camera.value} value={camera.value}>
+                  {camera.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <div style={styles.tabs}>
         <button style={page === "boot"     ? styles.activeTab : styles.tab} onClick={() => setPage("boot")}>1. BOOT</button>
         <button style={page === "schedule" ? styles.activeTab : styles.tab} onClick={() => setPage("schedule")}>2. SCHEDULE</button>
         <button style={page === "quickTools" ? styles.activeTab : styles.tab} onClick={() => setPage("quickTools")}>QUICK TOOLS</button>
