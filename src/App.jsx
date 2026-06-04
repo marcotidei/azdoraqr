@@ -616,25 +616,24 @@ export default function App() {
 
   return (
       <div style={styles.container}>
-        <div style={styles.headerRow}>
-          <h1 style={styles.title}>👵🏼&nbsp;azdòra QR</h1>
+      <>
+        <h1 style={styles.title}>👵🏼&nbsp;azdòra QR</h1>
 
-          <div style={styles.cameraInline}>
-            <label style={styles.cameraLabel}>Camera</label>
-            <select
-              value={cameraModel}
-              onChange={(e) => setCameraModel(e.target.value)}
-              style={styles.cameraSelect}
-            >
-              {CAMERA_OPTIONS.map((camera) => (
-                <option key={camera.value} value={camera.value}>
-                  {camera.label}
-                </option>
-              ))}
-            </select>
-          </div>
+        <div style={{ ...styles.cameraInline, justifyContent: "center", marginBottom: 16 }}>
+          <label style={styles.cameraLabel}>Camera</label>
+          <select
+            value={cameraModel}
+            onChange={(e) => setCameraModel(e.target.value)}
+            style={styles.cameraSelect}
+          >
+            {CAMERA_OPTIONS.map((camera) => (
+              <option key={camera.value} value={camera.value}>
+                {camera.label}
+              </option>
+            ))}
+          </select>
         </div>
-
+      </>
 
         <div style={styles.tabs}>
         <button style={page === "boot"     ? styles.activeTab : styles.tab} onClick={() => setPage("boot")}>1. BOOT</button>
@@ -684,13 +683,15 @@ const styles = {
     maxWidth: 900,
     margin: "0 auto",
   },
-  title: {
-    fontSize: 32,
-    margin: 0,
-    lineHeight: 1,
-    color: "#ffffff",
-    fontWeight: "700",
-  },
+title: {
+  fontSize: 32,
+  margin: 0,
+  lineHeight: 1,
+  color: "#ffffff",
+  fontWeight: "700",
+  textAlign: "center",
+  marginBottom: 12,
+},
   tabs: {
     display: "flex",
     gap: 10,
@@ -856,21 +857,21 @@ const styles = {
   },
   cameraLabel: {
     fontSize: 13,
-    color: "#292929",
+    color: "#ffffff",
     whiteSpace: "nowrap",
   },
-cameraSelect: {
-  minWidth: 170,
-  maxWidth: 220,
-  color: "#111",
-  backgroundColor: "#fff",
-  border: "1px solid #ccc",
-  borderRadius: 6,
-  padding: "4px 10px",
-  fontSize: 14,
-  WebkitAppearance: "menulist",
-  appearance: "menulist",
-},
+  cameraSelect: {
+    minWidth: 170,
+    maxWidth: 220,
+    color: "#111",
+    backgroundColor: "#fff",
+    border: "1px solid #ccc",
+    borderRadius: 6,
+    padding: "4px 10px",
+    fontSize: 14,
+    WebkitAppearance: "menulist",
+    appearance: "menulist",
+  },
   cameraInline: {
     display: "flex",
     alignItems: "flex-end",
