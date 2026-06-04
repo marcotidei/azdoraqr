@@ -620,7 +620,7 @@ export default function App() {
         <h1 style={styles.title}>👵🏼&nbsp;azdòra QR</h1>
 
         <div style={{ ...styles.cameraInline, justifyContent: "center", marginBottom: 16 }}>
-          <label style={styles.cameraLabel}>Camera</label>
+          <label style={styles.cameraLabel}></label>
           <select
             value={cameraModel}
             onChange={(e) => setCameraModel(e.target.value)}
@@ -848,7 +848,7 @@ title: {
   },
   cameraSelectorWrap: {
     display: "flex",
-    alignItems: "center",
+    alignItems: "left",
     gap: 8,
     background: "#ffffff",
     padding: "6px 10px",
