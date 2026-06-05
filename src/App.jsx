@@ -233,7 +233,6 @@ export default function App() {
 
   // Quick tools
   const [quickToolCommand, setQuickToolCommand] = useState("__upload_now__");
-  const [quickToolPermanent, setQuickToolPermanent] = useState(false);
   const [quickToolUploadTimeout, setQuickToolUploadTimeout] = useState("");
 
   // Reset settings
@@ -268,17 +267,12 @@ export default function App() {
     }
   }, [end, upload, uploadTime]);
 
-  // If quick tool is upload, force it to be one-shot (not permanent)
   function isQuickToolUpload() {
     return quickToolCommand === "__upload_now__";
   }
 
   function isQuickToolGpsSyncHighPrecision() {
     return quickToolCommand === "__gps_sync_hp__";
-  }
-
-  function quickToolSupportsPermanent() {
-    return !isQuickToolUpload() && !isQuickToolGpsSyncHighPrecision();
   }
   
   const filteredLensOptions = LENS_OPTIONS.filter((option) =>
@@ -371,12 +365,6 @@ export default function App() {
 
     if (quickToolCommand === "__gps_sync_hp__") {
       return `!D10`;
-    }
-
-    if (quickToolSupportsPermanent()) {
-      return quickToolPermanent
-        ? `*${quickToolCommand}`
-        : quickToolCommand;
     }
 
     return quickToolCommand;
@@ -641,25 +629,12 @@ export default function App() {
           </div>
         )}
 
-        {!isQuickToolUpload() && quickToolSupportsPermanent() && (
-          <div style={styles.checkboxRow}>
-            <label>
-              <input
-                type="checkbox"
-                checked={quickToolPermanent}
-                onChange={(e) => setQuickToolPermanent(e.target.checked)}
-              />{" "}
-              Make command permanent
-            </label>
-          </div>
-        )}
-
         <div style={styles.note}>
           {isQuickToolUpload() ? (
             <>
               This generates a one-shot upload QR.
               <br />
-              It is executed once and is not saved permanently.
+              It is executed once only.
             </>
           ) : isQuickToolGpsSyncHighPrecision() ? (
             <>
@@ -667,16 +642,10 @@ export default function App() {
               <br />
               It waits for GPS lock and attempts a high-precision time sync using <code>!D10</code>.
               <br />
-              It is executed once and is not saved permanently.
+              It is executed once only.
             </>
           ) : (
-            <>
-              This page generates a single utility QR command.
-              <br />
-              <strong>Unchecked</strong>: execute once only
-              <br />
-              <strong>Checked</strong>: save as permanent metadata-style command
-            </>
+            <>This page generates a single utility QR command.</>
           )}
         </div>
     );
