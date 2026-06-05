@@ -80,7 +80,7 @@ const QUICK_TOOL_GROUPS = [
       {
         value: "__gps_sync_hp__",
         label: "Sync time now - high precision (!D10)",
-        compatible: ["hero10", "hero11"],
+        compatible: ["hero10", "hero11", "hero13"],
       },
     ],
   },
@@ -693,7 +693,6 @@ export default function App() {
         <h1 style={styles.title}>👵🏼&nbsp;azdòra QR</h1>
 
         <div style={{ ...styles.cameraInline, justifyContent: "center", marginBottom: 16 }}>
-          <label style={styles.cameraLabel}></label>
           <select
             value={cameraModel}
             onChange={(e) => setCameraModel(e.target.value)}
