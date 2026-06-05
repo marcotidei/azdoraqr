@@ -75,6 +75,16 @@ const QUICK_TOOL_GROUPS = [
     ],
   },
   {
+    label: "GPS Time Sync",
+    options: [
+      {
+        value: "__gps_sync_hp__",
+        label: "Sync time now - high precision (!D10)",
+        compatible: ["hero10", "hero11"],
+      },
+    ],
+  },
+  {
     label: "Beeps",
     options: [
       { value: "oV0", label: "Muted (oV0)" },
@@ -263,8 +273,12 @@ export default function App() {
     return quickToolCommand === "__upload_now__";
   }
 
+  function isQuickToolGpsSyncHighPrecision() {
+    return quickToolCommand === "__gps_sync_hp__";
+  }
+
   function quickToolSupportsPermanent() {
-    return !isQuickToolUpload();
+    return !isQuickToolUpload() && !isQuickToolGpsSyncHighPrecision();
   }
   
   const filteredLensOptions = LENS_OPTIONS.filter((option) =>
@@ -353,6 +367,10 @@ export default function App() {
     if (quickToolCommand === "__upload_now__") {
       const timeoutSuffix = quickToolUploadTimeout ? String(quickToolUploadTimeout) : "";
       return `!5U${timeoutSuffix}`;
+    }
+
+    if (quickToolCommand === "__gps_sync_hp__") {
+      return `!D10`;
     }
 
     if (quickToolSupportsPermanent()) {
@@ -589,15 +607,24 @@ export default function App() {
             onChange={(e) => setQuickToolCommand(e.target.value)}
             style={styles.select}
           >
-            {QUICK_TOOL_GROUPS.map((group) => (
-              <optgroup key={group.label} label={group.label}>
-                {group.options.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </optgroup>
-            ))}
+            {QUICK_TOOL_GROUPS.map((group) => {
+              const visibleOptions = group.options.filter(
+                (option) =>
+                  !option.compatible || option.compatible.includes(cameraModel)
+              );
+
+              if (visibleOptions.length === 0) return null;
+
+              return (
+                <optgroup key={group.label} label={group.label}>
+                  {visibleOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </optgroup>
+              );
+            })}
           </select>
         </div>
 
@@ -634,6 +661,14 @@ export default function App() {
               <br />
               It is executed once and is not saved permanently.
             </>
+          ) : isQuickToolGpsSyncHighPrecision() ? (
+            <>
+              This generates a one-shot GPS time sync QR.
+              <br />
+              It waits for GPS lock and attempts a high-precision time sync using <code>!D10</code>.
+              <br />
+              It is executed once and is not saved permanently.
+            </>
           ) : (
             <>
               This page generates a single utility QR command.
@@ -644,7 +679,6 @@ export default function App() {
             </>
           )}
         </div>
-      </>
     );
   } 
 
