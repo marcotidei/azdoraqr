@@ -648,8 +648,9 @@ export default function App() {
             <>This page generates a single utility QR command.</>
           )}
         </div>
+      </>
     );
-  } 
+  }
 
   function renderResetControls() {
     const resetInfo = RESET_INFO[resetType] ?? RESET_INFO.metadata;
