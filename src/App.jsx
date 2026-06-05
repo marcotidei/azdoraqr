@@ -207,7 +207,7 @@ export default function App() {
   const [interval, setInterval] = useState(20);
   const [enforcePhotoMode, setEnforcePhotoMode] = useState(true);
   const [lens, setLens] = useState("fW");
-  const [manualDriftSeconds, setManualDriftSeconds] = useState(2);
+  const [manualDriftSeconds, setManualDriftSeconds] = useState(5);
 
   // Upload settings
   const [upload, setUpload] = useState(true);
