@@ -144,9 +144,52 @@ function timeToMinutes(time) {
   return h * 60 + m;
 }
 
-function intervalToLabs(interval) {
-  return `00;${String(interval).padStart(2, "0")}R`;
+function pad2(value) {
+  return String(value).padStart(2, "0");
 }
+
+function isHero13(cameraModel) {
+  return cameraModel === "hero13";
+}
+
+function buildHero13AlignedRepeat(interval) {
+  const hours = Math.floor(interval / 60);
+  const minutes = interval % 60;
+  return `!${pad2(hours)};${pad2(minutes)}R`;
+}
+
+function buildRelativeRepeat(interval, manualDriftSeconds) {
+  const totalSeconds = Math.max(1, interval * 60 - Number(manualDriftSeconds || 0));
+  return `!${totalSeconds}RQ`;
+}
+
+function buildCalculatedBoundaryRepeat(interval) {
+  // Assumes a short post-capture pause happened first (e.g. !2N),
+  // so we are never exactly on a slot boundary at :00.
+  return [
+    `=At:N`,
+    `=A%${interval}`,
+    `=Bt:S`,
+    `=C${interval}`,
+    `=C-A`,
+    `=C*60`,
+    `=C-B`,
+    `!$CR`,
+  ].join("");
+}
+
+function buildIntervalRepeat(cameraModel, interval, manualDriftSeconds) {
+  if (isHero13(cameraModel)) {
+    return buildHero13AlignedRepeat(interval);
+  }
+
+  if (interval >= 60) {
+    return buildRelativeRepeat(interval, manualDriftSeconds);
+  }
+
+  return buildCalculatedBoundaryRepeat(interval);
+}
+
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
@@ -155,15 +198,16 @@ export default function App() {
   const [page, setPage] = useState("boot"); // boot | schedule | quickTools | reset
 
   // Camera selection
-  const [cameraModel, setCameraModel] = useState("hero10");
+  const [cameraModel, setCameraModel] = useState("hero13");
 
-// Schedule settings
+  // Schedule settings
   const [days, setDays] = useState(ALL_DAYS);
   const [start, setStart] = useState("07:00");
   const [end, setEnd] = useState("19:00");
   const [interval, setInterval] = useState(20);
   const [enforcePhotoMode, setEnforcePhotoMode] = useState(true);
   const [lens, setLens] = useState("fW");
+  const [manualDriftSeconds, setManualDriftSeconds] = useState(2);
 
   // Upload settings
   const [upload, setUpload] = useState(true);
@@ -258,6 +302,17 @@ export default function App() {
     return `=Tt:W=(${conditions})>`;
   }
 
+  function buildCaptureCommands() {
+    let script = "";
+
+    if (enforcePhotoMode) script += `+mP`;
+    if (lens) script += `+${lens}`;
+
+    script += `+!S+!2N`;
+
+    return script;
+  }
+
   function generateBootScript() {
     let script = "";
 
@@ -274,17 +329,21 @@ export default function App() {
     const wakeTime = addMinutes(start, -1);
     const stopTime = addMinutes(end, 1);
     const dayFilter = buildDayFilter();
+    const captureCommands = buildCaptureCommands();
+    const repeatCommands = buildIntervalRepeat(cameraModel, interval, manualDriftSeconds);
 
     let script = `!SAVEsch=>${wakeTime}<${stopTime}+`;
     if (dayFilter) script += dayFilter;
+
     script += `!1N`;
-    if (enforcePhotoMode) script += `+mP`;
+    script += captureCommands;
+    script += repeatCommands;
 
     if (upload) {
       const timeoutSuffix = uploadTimeout ? String(uploadTimeout) : "";
       script += `~!${uploadTime}U${timeoutSuffix}+!${start}R`;
     } else {
-      script += `!${start}R`;
+      script += `~!${start}R`;
     }
 
     return script;
@@ -436,7 +495,36 @@ export default function App() {
 
         <div style={fieldGrid}>
           <label style={styles.label}>Interval (minutes)</label>
-          <input type="number" min="1" value={interval} onChange={(e) => setInterval(Number(e.target.value))} style={styles.input} />
+          <input
+            type="number"
+            min="1"
+            value={interval}
+            onChange={(e) => setInterval(Number(e.target.value))}
+            style={styles.input}
+          />
+        </div>
+
+        {cameraModel !== "hero13" && interval >= 60 && (
+          <div style={fieldGrid}>
+            <label style={styles.label}>Drift Compensation (sec)</label>
+            <input
+              type="number"
+              min="0"
+              value={manualDriftSeconds}
+              onChange={(e) => setManualDriftSeconds(Number(e.target.value))}
+              style={styles.input}
+            />
+          </div>
+        )}
+
+        <div style={styles.note}>
+          {cameraModel === "hero13" ? (
+            <>Using HERO13 clock-aligned timing.</>
+          ) : interval >= 60 ? (
+            <>Using simple repeat timing with optional drift compensation.</>
+          ) : (
+            <>Using calculated next-boundary timing for better sub-hour alignment.</>
+          )}
         </div>
 
         <div style={styles.checkboxRow}>
